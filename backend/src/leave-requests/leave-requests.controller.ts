@@ -1,9 +1,10 @@
-import { Controller, Post, Patch, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Post, Patch, Get, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { LeaveRequestsService } from './leave-requests.service';
 import { CreateLeaveDto } from './dto/create-leave.dto';
 import { UpdateLeaveDto } from './dto/update-leave.dto';
 import { DecideLeaveDto } from './dto/decide-leave.dto';
+import { LeaveFilterDto } from './dto/leave-filter.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -73,5 +74,22 @@ export class LeaveRequestsController {
   @ApiResponse({ status: 403, description: 'Insufficient permissions' })
   decide(@CurrentUser() user: { id: string }, @Param('id') id: string, @Body() dto: DecideLeaveDto) {
     return this.service.decide(user.id, id, dto);
+  }
+
+  @Get('mine')
+  @Roles(Role.EMPLOYEE, Role.HR, Role.ADMIN)
+  @ApiOperation({ summary: 'Get own leave requests with pagination' })
+  @ApiResponse({ status: 200, description: 'Paginated leave requests' })
+  findMine(@CurrentUser() user: { id: string }, @Query() filters: LeaveFilterDto) {
+    return this.service.findMine(user.id, filters);
+  }
+
+  @Get()
+  @Roles(Role.HR, Role.ADMIN)
+  @ApiOperation({ summary: 'Get all leave requests (HR/Admin only)' })
+  @ApiResponse({ status: 200, description: 'Paginated leave requests' })
+  @ApiResponse({ status: 403, description: 'Insufficient permissions' })
+  findAll(@Query() filters: LeaveFilterDto) {
+    return this.service.findAll(filters);
   }
 }
