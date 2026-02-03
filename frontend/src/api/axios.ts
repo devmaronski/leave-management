@@ -7,24 +7,28 @@ const apiClient = axios.create({
   },
 });
 
-// TODO: Add request interceptor for JWT token
-// apiClient.interceptors.request.use((config) => {
-//   const token = // get from AuthContext
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });
+// Request interceptor - attach JWT token from localStorage
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-// TODO: Add response interceptor for error handling
-// apiClient.interceptors.response.use(
-//   (response) => response,
-//   (error) => {
-//     if (error.response?.status === 401) {
-//       // Handle token expiration
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+// Response interceptor - handle 401 unauthorized
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('access_token');
+      window.dispatchEvent(new Event('auth:logout'));
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default apiClient;
