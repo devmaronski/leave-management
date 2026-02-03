@@ -100,3 +100,57 @@ export const EditWithAllFields: Story = {
     onCancel: () => console.log('Edit cancelled'),
   },
 };
+
+export const DateValidationError: Story = {
+  args: {
+    mode: 'create',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'This story demonstrates cross-field validation. If you set end date before start date and try to submit, the form will show an error: "End date must be on or after start date".',
+      },
+    },
+  },
+};
+
+export const ReasonTooLong: Story = {
+  args: {
+    mode: 'create',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The reason field has a maximum length of 500 characters. If exceeded, validation will show "Reason must not exceed 500 characters".',
+      },
+    },
+  },
+};
+
+export const EmergencyLeave: Story = {
+  args: {
+    mode: 'edit',
+    initialValues: {
+      id: '3',
+      userId: 'user-3',
+      type: 'EL',
+      startDate: '2026-02-15T00:00:00.000Z',
+      endDate: '2026-02-15T00:00:00.000Z',
+      reason: 'Family emergency requiring immediate attention',
+      status: 'PENDING',
+      createdAt: '2026-02-14T18:00:00.000Z',
+      updatedAt: '2026-02-14T18:00:00.000Z',
+    } as LeaveRequest,
+    onSuccess: () => console.log('Emergency leave updated'),
+    onCancel: () => console.log('Edit cancelled'),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Example of an emergency leave request (single day).',
+      },
+    },
+  },
+};
