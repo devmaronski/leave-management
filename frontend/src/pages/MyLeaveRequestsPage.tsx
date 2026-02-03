@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getMyLeaveRequests, type LeaveFilterDto } from '../api/leave.api';
+import { DEFAULT_PAGE_SIZE } from '@/constants/leave.constants';
 import type { LeaveRequest } from '../types/models';
 import { LeaveRequestForm } from '../components/leave/LeaveRequestForm';
 import { LeaveRequestsTable } from '../components/leave/LeaveRequestsTable';
 import { CancelLeaveDialog } from '../components/leave/CancelLeaveDialog';
 import { EditLeaveDialog } from '../components/leave/EditLeaveDialog';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Button } from '../components/ui/button';
 
 export function MyLeaveRequestsPage() {
   const [page, setPage] = useState(1);
@@ -15,15 +17,26 @@ export function MyLeaveRequestsPage() {
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [leaveToCancel, setLeaveToCancel] = useState<LeaveRequest | null>(null);
 
-  const filters: LeaveFilterDto = {
+  const filters: LeaveFilterDto = useMemo(() => ({
     page,
-    limit: 10,
-  };
+    limit: DEFAULT_PAGE_SIZE,
+  }), [page]);
 
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['leaveRequests', 'mine', filters],
     queryFn: () => getMyLeaveRequests(filters),
   });
+
+  if (error) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="text-center py-12">
+          <p className="text-red-600 mb-4">Failed to load leave requests</p>
+          <Button onClick={() => refetch()}>Retry</Button>
+        </div>
+      </div>
+    );
+  }
 
   const handleEditClick = (leave: LeaveRequest) => {
     setLeaveToEdit(leave);
