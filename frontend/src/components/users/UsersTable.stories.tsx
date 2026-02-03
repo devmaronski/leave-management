@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
 import { UsersTable } from './UsersTable';
 import type { User } from '../../types/models';
 
@@ -18,7 +17,7 @@ const meta = {
   },
   tags: ['autodocs'],
   args: {
-    onDeactivate: fn(),
+    onDeactivate: () => {},
   },
 } satisfies Meta<typeof UsersTable>;
 
