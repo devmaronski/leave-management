@@ -9,6 +9,7 @@ import { CreateLeaveDto } from './dto/create-leave.dto';
 import { UpdateLeaveDto } from './dto/update-leave.dto';
 import { DecideLeaveDto } from './dto/decide-leave.dto';
 import { LeaveFilterDto } from './dto/leave-filter.dto';
+import { paginate } from '../common/utils/pagination.util';
 
 @Injectable()
 export class LeaveRequestsService {
@@ -141,25 +142,14 @@ export class LeaveRequestsService {
       ...(status && { status }),
     };
 
-    const [data, total] = await Promise.all([
-      this.prisma.leaveRequest.findMany({
+    return paginate(
+      this.prisma.leaveRequest,
+      {
         where,
-        skip: (page - 1) * limit,
-        take: limit,
         orderBy: { createdAt: 'desc' },
-      }),
-      this.prisma.leaveRequest.count({ where }),
-    ]);
-
-    return {
-      data,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
       },
-    };
+      { page, limit },
+    );
   }
 
   async findAll(filters: LeaveFilterDto) {
@@ -170,11 +160,11 @@ export class LeaveRequestsService {
       ...(status && { status }),
     };
 
-    const [data, total] = await Promise.all([
-      this.prisma.leaveRequest.findMany({
+    return paginate(
+      this.prisma.leaveRequest,
+      {
         where,
-        skip: (page - 1) * limit,
-        take: limit,
+        orderBy: { createdAt: 'desc' },
         include: {
           user: {
             select: { id: true, email: true, firstName: true, lastName: true },
@@ -183,19 +173,8 @@ export class LeaveRequestsService {
             select: { id: true, email: true, firstName: true, lastName: true },
           },
         },
-        orderBy: { createdAt: 'desc' },
-      }),
-      this.prisma.leaveRequest.count({ where }),
-    ]);
-
-    return {
-      data,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
       },
-    };
+      { page, limit },
+    );
   }
 }
