@@ -255,4 +255,99 @@ describe('LeaveRequestsService', () => {
       await expect(service.cancel(userId, leaveId)).rejects.toThrow(NotFoundException);
     });
   });
+
+  describe('decide', () => {
+    it('should approve a PENDING leave request and set decision metadata', async () => {
+      const decisionById = 'hr123';
+      const leaveId = 'leave123';
+      const dto: DecideLeaveDto = {
+        decision: 'APPROVED',
+        note: 'Enjoy your vacation',
+      };
+
+      const existingLeave = {
+        id: leaveId,
+        userId: 'employee123',
+        status: 'PENDING',
+        decisionById: null,
+        decidedAt: null,
+      };
+
+      const decidedLeave = {
+        ...existingLeave,
+        status: 'APPROVED',
+        decisionById,
+        decisionNote: dto.note,
+        decidedAt: new Date(),
+      };
+
+      jest.spyOn(prisma.leaveRequest, 'findUnique').mockResolvedValue(existingLeave as any);
+      jest.spyOn(prisma.leaveRequest, 'update').mockResolvedValue(decidedLeave as any);
+
+      const result = await service.decide(decisionById, leaveId, dto);
+
+      expect(result.status).toBe('APPROVED');
+      expect(result.decisionById).toBe(decisionById);
+      expect(result.decisionNote).toBe(dto.note);
+      expect(result.decidedAt).toBeDefined();
+    });
+
+    it('should reject a PENDING leave request', async () => {
+      const decisionById = 'hr123';
+      const leaveId = 'leave123';
+      const dto: DecideLeaveDto = {
+        decision: 'REJECTED',
+        note: 'Insufficient leave balance',
+      };
+
+      const existingLeave = {
+        id: leaveId,
+        userId: 'employee123',
+        status: 'PENDING',
+      };
+
+      const decidedLeave = {
+        ...existingLeave,
+        status: 'REJECTED',
+        decisionById,
+        decisionNote: dto.note,
+        decidedAt: new Date(),
+      };
+
+      jest.spyOn(prisma.leaveRequest, 'findUnique').mockResolvedValue(existingLeave as any);
+      jest.spyOn(prisma.leaveRequest, 'update').mockResolvedValue(decidedLeave as any);
+
+      const result = await service.decide(decisionById, leaveId, dto);
+
+      expect(result.status).toBe('REJECTED');
+    });
+
+    it('should throw BadRequestException if leave is not PENDING', async () => {
+      const decisionById = 'hr123';
+      const leaveId = 'leave123';
+      const dto: DecideLeaveDto = { decision: 'APPROVED' };
+
+      const existingLeave = {
+        id: leaveId,
+        status: 'APPROVED', // Already decided
+      };
+
+      jest.spyOn(prisma.leaveRequest, 'findUnique').mockResolvedValue(existingLeave as any);
+
+      await expect(service.decide(decisionById, leaveId, dto)).rejects.toThrow(BadRequestException);
+      await expect(service.decide(decisionById, leaveId, dto)).rejects.toThrow(
+        'Can only decide on PENDING leave requests',
+      );
+    });
+
+    it('should throw NotFoundException if leave does not exist', async () => {
+      const decisionById = 'hr123';
+      const leaveId = 'nonexistent';
+      const dto: DecideLeaveDto = { decision: 'APPROVED' };
+
+      jest.spyOn(prisma.leaveRequest, 'findUnique').mockResolvedValue(null);
+
+      await expect(service.decide(decisionById, leaveId, dto)).rejects.toThrow(NotFoundException);
+    });
+  });
 });
