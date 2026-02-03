@@ -1,33 +1,146 @@
-# React + TypeScript + Vite
+# Leave Management System - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + TypeScript frontend for the Employee Leave Management System.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Framework**: React 18 + TypeScript
+- **Build Tool**: Vite 6
+- **Styling**: Tailwind CSS 4
+- **UI Components**: shadcn/ui (Radix + Tailwind)
+- **Routing**: React Router 7
+- **State Management**: React Query (server state) + Context API (auth state)
+- **HTTP Client**: Axios
+- **Forms**: React Hook Form + Zod
+- **Component Docs**: Storybook 8
 
-## React Compiler
+## Prerequisites
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node.js 18+
+- npm or yarn
+- Backend API running on `http://localhost:3000`
 
-## Expanding the ESLint configuration
+## Setup
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+2. **Configure environment variables**
+   ```bash
+   cp .env.example .env
+   # Edit .env to set VITE_API_BASE_URL if backend runs on different port
+   ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
+3. **Run development server**
+   ```bash
+   npm run dev
+   ```
+   App runs at `http://localhost:5173`
+
+4. **Run Storybook** (component documentation)
+   ```bash
+   npm run storybook
+   ```
+   Storybook runs at `http://localhost:6006`
+
+## Project Structure
+
+```
+src/
+├── api/                 # Axios client and API endpoint functions
+├── components/
+│   ├── ui/             # shadcn/ui base components
+│   ├── layout/         # Layout components (Navbar, Sidebar, etc.)
+│   ├── common/         # Shared feature components
+│   └── leave/          # Leave management components
+├── contexts/           # React Context providers (auth)
+├── hooks/              # Custom React hooks
+├── pages/              # Route page components
+├── routes/             # Route guards and protection
+├── types/              # TypeScript type definitions
+└── utils/              # Helper functions
+```
+
+## Development Workflow
+
+### Bootstrap Phase (Current - COMPLETE)
+- ✅ Vite + React + TypeScript setup
+- ✅ Tailwind CSS + shadcn/ui components
+- ✅ React Router with protected route architecture
+- ✅ TanStack Query provider
+- ✅ Axios client with interceptor stubs
+- ✅ AuthContext shell
+- ✅ Storybook with baseline component stories
+- ✅ Folder structure and path aliases
+
+### Next Steps (Phases B-F)
+- **Phase B**: Auth implementation (login, token management, useAuth hook)
+- **Phase C**: Employee leave workflow (forms, tables, API integration)
+- **Phase D**: HR/Admin workflow (approval/rejection)
+- **Phase E**: Optional admin users UI
+- **Phase F**: Polish + documentation
+
+## Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+- `npm run storybook` - Start Storybook
+- `npm run build-storybook` - Build Storybook static site
+
+## Architecture Decisions
+
+### Why React Query?
+- Industry standard for server state management
+- Built-in caching, refetching, and error handling
+- Reduces boilerplate for API calls
+
+### Why shadcn/ui?
+- Copy-paste components (no package dependency lock-in)
+- Built on Radix UI (accessible primitives)
+- Tailwind-based (consistent with project styling)
+- Easy customization
+
+### Why Context API for Auth?
+- Simple, lightweight state management for auth
+- No need for heavy state library (Zustand/Redux) for single concern
+- React Query handles all server state
+
+### Token Storage Strategy
+- **Current**: Placeholder (no implementation yet)
+- **Planned**: localStorage (exam-friendly, acceptable tradeoff)
+- **Production**: httpOnly cookies + refresh token rotation
+
+## Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `VITE_API_BASE_URL` | Backend API base URL | `http://localhost:3000` |
+
+## Contributing
+
+1. Create feature branch from `main`
+2. Make small, logical commits
+3. Run linting before commit: `npm run lint`
+4. Document new components in Storybook
+5. Update this README if adding new setup steps
+
+## Intentionally Deferred
+
+The following are NOT implemented in bootstrap phase:
+- Business logic and API calls
+- Authentication flow and token management
+- Form validation implementations
+- Feature pages (leave management, users)
+- Layout components (navbar, sidebar)
+- Error boundaries and loading states
+- Integration with backend API
+
+These will be implemented in subsequent phases per the project plan.
+
       tseslint.configs.stylisticTypeChecked,
 
       // Other configs...
