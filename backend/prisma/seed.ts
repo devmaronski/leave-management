@@ -10,7 +10,7 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  const saltRounds = 10;
+  const saltRounds = 12;
 
   // Create admin user
   const adminPassword = await bcrypt.hash('admin123', saltRounds);
@@ -29,7 +29,7 @@ async function main() {
   console.log('Created admin user:', admin.email);
 
   // Create HR user
-  const hrPassword = await bcrypt.hash('hr123', saltRounds);
+  const hrPassword = await bcrypt.hash('hr123456', saltRounds);
   const hr = await prisma.user.upsert({
     where: { email: 'hr@company.com' },
     update: {},
