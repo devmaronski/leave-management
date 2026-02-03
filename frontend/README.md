@@ -65,7 +65,7 @@ src/
 
 ## Development Workflow
 
-### Bootstrap Phase (Current - COMPLETE)
+### Bootstrap Phase - COMPLETE ✅
 - ✅ Vite + React + TypeScript setup
 - ✅ Tailwind CSS + shadcn/ui components
 - ✅ React Router with protected route architecture
@@ -75,8 +75,18 @@ src/
 - ✅ Storybook with baseline component stories
 - ✅ Folder structure and path aliases
 
-### Next Steps (Phases B-F)
-- **Phase B**: Auth implementation (login, token management, useAuth hook)
+### Phase B - Auth Foundation - COMPLETE ✅
+- ✅ Complete AuthContext implementation with token persistence
+- ✅ Login form with React Hook Form + Zod validation
+- ✅ Axios interceptors for JWT attachment and 401 handling
+- ✅ Protected routing with LoadingSpinner
+- ✅ Role-based navigation in Navbar
+- ✅ Dashboard shell with user info
+- ✅ Toast notifications with sonner
+- ✅ Unit tests for auth logic
+- ✅ Storybook stories for auth components
+
+### Next Steps (Phases C-F)
 - **Phase C**: Employee leave workflow (forms, tables, API integration)
 - **Phase D**: HR/Admin workflow (approval/rejection)
 - **Phase E**: Optional admin users UI
@@ -110,15 +120,127 @@ src/
 - React Query handles all server state
 
 ### Token Storage Strategy
-- **Current**: Placeholder (no implementation yet)
-- **Planned**: localStorage (exam-friendly, acceptable tradeoff)
-- **Production**: httpOnly cookies + refresh token rotation
+- **Current**: JWT access token stored in `localStorage`
+- **Rationale**: Simple implementation suitable for exam/demo context
+  - Survives page refreshes without complex cookie handling
+  - Backend validates all requests with JWT signature
+  - Straightforward implementation reduces exam time pressure
+- **Known Risk**: Vulnerable to XSS attacks (malicious scripts can read localStorage)
+- **Mitigations**:
+  - React escapes all user content by default
+  - No use of `dangerouslySetInnerHTML`
+  - Backend validates all tokens and implements rate limiting
+  - Strict Content Security Policy (CSP) in production
+- **Production Alternative**: 
+  - Store refresh token in httpOnly cookie (immune to XSS)
+  - Keep short-lived access token in memory (lost on refresh)
+  - Use refresh endpoint to restore session automatically
+
+## Authentication Flow
+
+### Login Process
+1. User submits email/password via LoginForm (with Zod validation)
+2. `AuthContext.login()` calls `/auth/login` endpoint
+3. Backend returns JWT access token
+4. Token stored in `localStorage` as `access_token`
+5. `getCurrentUser()` fetches user data from `/auth/me`
+6. User state updated in AuthContext
+7. Redirect to dashboard
+
+### Session Restoration
+1. On app mount, AuthContext checks for `access_token` in localStorage
+2. If token exists, TanStack Query calls `/auth/me` to restore user data
+3. LoadingSpinner shown during restore
+4. User redirected to appropriate page based on auth state
+
+### Authenticated Requests
+1. Axios request interceptor reads token from localStorage
+2. Attaches `Authorization: Bearer <token>` header to all requests
+3. Backend validates JWT on each request
+
+### Logout Process
+1. User clicks logout button in Navbar
+2. `AuthContext.logout()` removes token from localStorage
+3. User state cleared
+4. TanStack Query cache cleared
+5. Redirect to login page
+
+### Automatic Logout on 401
+1. Axios response interceptor detects 401 status
+2. Token removed from localStorage
+3. Custom `auth:logout` event dispatched
+4. AuthContext listener clears user state and cache
+5. User redirected to login (via ProtectedRoute guard)
+
+### Protected Routes
+- ProtectedRoute wrapper checks `isAuthenticated` from AuthContext
+- Shows LoadingSpinner while auth state is loading
+- Redirects to `/login` if not authenticated
+- Renders children (protected content) if authenticated
+
+### Role-Based Access Control
+- RoleGuard component checks user role against allowed roles
+- Shows "Access Denied" message if role not permitted
+- Navbar conditionally renders links based on user role:
+  - EMPLOYEE: Dashboard, My Leave Requests
+  - HR: Dashboard, Manage Leave
+  - ADMIN: Dashboard, Manage Leave, Users
 
 ## Environment Variables
 
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `VITE_API_BASE_URL` | Backend API base URL | `http://localhost:3000` |
+
+## Testing
+
+### Unit Tests
+Run all unit tests:
+```bash
+npm run test
+```
+
+Current test coverage:
+- AuthContext login/logout logic
+- ProtectedRoute guard behavior
+- Token persistence in localStorage
+
+### Smoke Test Checklist (Phase B - Authentication)
+
+#### Login Flow
+- [ ] Navigate to `/login` — form renders with email/password fields
+- [ ] Submit empty form — validation errors display inline
+- [ ] Submit invalid email — shows "Invalid email address"
+- [ ] Submit with wrong credentials — shows backend error message
+- [ ] Submit with correct credentials — redirects to `/dashboard`
+- [ ] Verify token stored in localStorage (DevTools → Application)
+
+#### Session Persistence
+- [ ] Login successfully, refresh page — user remains logged in
+- [ ] Close tab, reopen app — session restored (no re-login required)
+- [ ] Clear localStorage, refresh — redirects to login
+
+#### Protected Routes
+- [ ] While logged out, navigate to `/dashboard` — redirects to `/login`
+- [ ] Login as EMPLOYEE, manually navigate to `/manage/leave-requests` — shows "Access Denied"
+- [ ] Login as HR, navigate to `/users` — shows "Access Denied"
+- [ ] Login as ADMIN — can access all routes
+
+#### Navigation & Logout
+- [ ] Login as EMPLOYEE — navbar shows "Dashboard" + "My Leave Requests"
+- [ ] Login as HR — navbar shows "Dashboard" + "Manage Leave"
+- [ ] Login as ADMIN — navbar shows "Dashboard" + "Manage Leave" + "Users"
+- [ ] Click logout button — clears user, redirects to login, localStorage token removed
+
+#### Error Handling
+- [ ] Backend server down — shows network error toast
+- [ ] API returns 401 mid-session (simulate by invalidating token) — auto-logout triggered
+
+#### Storybook
+- [ ] Run `npm run storybook` — server starts
+- [ ] Navigate to LoginForm stories — see default, validation errors, loading states
+- [ ] Navigate to LoadingSpinner story — spinner animates
+- [ ] Navigate to ErrorState story — see default and with retry button
 
 ## Contributing
 
@@ -130,16 +252,22 @@ src/
 
 ## Intentionally Deferred
 
-The following are NOT implemented in bootstrap phase:
-- Business logic and API calls
-- Authentication flow and token management
-- Form validation implementations
-- Feature pages (leave management, users)
-- Layout components (navbar, sidebar)
-- Error boundaries and loading states
-- Integration with backend API
+The following are NOT yet implemented (planned for Phases C-F):
+- Leave request forms and tables (Employee view)
+- Leave request approval/rejection workflow (HR/Admin)
+- User management UI (Admin only)
+- Advanced filtering and pagination
+- Data export functionality
+- Email notifications
+- Leave balance tracking
+- Comprehensive error boundaries
 
-These will be implemented in subsequent phases per the project plan.
+Phase B (Auth Foundation) is now complete with:
+- ✅ Full authentication flow
+- ✅ Token management and persistence
+- ✅ Protected routing and role guards
+- ✅ Login form with validation
+- ✅ Dashboard with role-aware navigation
 
       tseslint.configs.stylisticTypeChecked,
 
