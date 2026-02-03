@@ -3,6 +3,7 @@ import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagg
 import { LeaveRequestsService } from './leave-requests.service';
 import { CreateLeaveDto } from './dto/create-leave.dto';
 import { UpdateLeaveDto } from './dto/update-leave.dto';
+import { DecideLeaveDto } from './dto/decide-leave.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -62,5 +63,15 @@ export class LeaveRequestsController {
   @ApiResponse({ status: 400, description: 'Cannot cancel non-PENDING leave' })
   cancel(@CurrentUser() user: { id: string }, @Param('id') id: string) {
     return this.service.cancel(user.id, id);
+  }
+
+  @Post(':id/decision')
+  @Roles(Role.HR, Role.ADMIN)
+  @ApiOperation({ summary: 'Approve or reject a PENDING leave request (HR/Admin only)' })
+  @ApiResponse({ status: 200, description: 'Decision recorded' })
+  @ApiResponse({ status: 400, description: 'Leave is not PENDING' })
+  @ApiResponse({ status: 403, description: 'Insufficient permissions' })
+  decide(@CurrentUser() user: { id: string }, @Param('id') id: string, @Body() dto: DecideLeaveDto) {
+    return this.service.decide(user.id, id, dto);
   }
 }

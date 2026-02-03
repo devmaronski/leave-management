@@ -2,6 +2,7 @@ import { Injectable, BadRequestException, NotFoundException, ForbiddenException 
 import { PrismaService } from '../common/prisma/prisma.service';
 import { CreateLeaveDto } from './dto/create-leave.dto';
 import { UpdateLeaveDto } from './dto/update-leave.dto';
+import { DecideLeaveDto } from './dto/decide-leave.dto';
 
 @Injectable()
 export class LeaveRequestsService {
@@ -85,6 +86,30 @@ export class LeaveRequestsService {
     return this.prisma.leaveRequest.update({
       where: { id: leaveId },
       data: { status: 'CANCELLED' },
+    });
+  }
+
+  async decide(decisionById: string, leaveId: string, dto: DecideLeaveDto) {
+    const leave = await this.prisma.leaveRequest.findUnique({
+      where: { id: leaveId },
+    });
+
+    if (!leave) {
+      throw new NotFoundException('Leave request not found');
+    }
+
+    if (leave.status !== 'PENDING') {
+      throw new BadRequestException('Can only decide on PENDING leave requests');
+    }
+
+    return this.prisma.leaveRequest.update({
+      where: { id: leaveId },
+      data: {
+        status: dto.decision,
+        decisionById,
+        decisionNote: dto.note || null,
+        decidedAt: new Date(),
+      },
     });
   }
 }
