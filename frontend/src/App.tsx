@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './routes/ProtectedRoute';
+import { AppShell } from './components/layout/AppShell';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { MyLeaveRequestsPage } from './pages/MyLeaveRequestsPage';
@@ -11,35 +13,23 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <Toaster position="top-right" richColors />
         <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<LoginPage />} />
 
-          {/* Protected Routes */}
+          {/* Protected Routes with Layout */}
           <Route
-            path="/dashboard"
             element={
               <ProtectedRoute>
-                <DashboardPage />
+                <AppShell />
               </ProtectedRoute>
             }
-          />
-          <Route
-            path="/leave-requests"
-            element={
-              <ProtectedRoute>
-                <MyLeaveRequestsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/manage/leave-requests"
-            element={
-              <ProtectedRoute>
-                <ManageLeaveRequestsPage />
-              </ProtectedRoute>
-            }
-          />
+          >
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/leave-requests" element={<MyLeaveRequestsPage />} />
+            <Route path="/manage/leave-requests" element={<ManageLeaveRequestsPage />} />
+          </Route>
 
           {/* Default Redirect */}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
