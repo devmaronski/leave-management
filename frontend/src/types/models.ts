@@ -41,3 +41,16 @@ export interface PaginatedResponse<T> {
     totalPages: number;
   };
 }
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  accessToken: string;
+}
+
+export interface AuthUser extends User {
+  // Backend /me returns standard User fields
+}
