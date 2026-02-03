@@ -180,7 +180,11 @@ export function LeaveRequestForm({
               <FormItem>
                 <FormLabel className="block text-left w-full">Start Date</FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} />
+                  <Input 
+                    type="date" 
+                    min={new Date().toISOString().split('T')[0]}
+                    {...field} 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -190,15 +194,24 @@ export function LeaveRequestForm({
           <FormField
             control={form.control}
             name="endDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="block text-left w-full">End Date</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const startDate = form.watch('startDate');
+              const minEndDate = startDate || new Date().toISOString().split('T')[0];
+              
+              return (
+                <FormItem>
+                  <FormLabel className="block text-left w-full">End Date</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="date" 
+                      min={minEndDate}
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
         </div>
 
