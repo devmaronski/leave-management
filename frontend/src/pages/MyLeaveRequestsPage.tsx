@@ -5,11 +5,13 @@ import type { LeaveRequest } from '../types/models';
 import { LeaveRequestForm } from '../components/leave/LeaveRequestForm';
 import { LeaveRequestsTable } from '../components/leave/LeaveRequestsTable';
 import { CancelLeaveDialog } from '../components/leave/CancelLeaveDialog';
+import { EditLeaveDialog } from '../components/leave/EditLeaveDialog';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 
 export function MyLeaveRequestsPage() {
   const [page, setPage] = useState(1);
-  const [selectedLeave, setSelectedLeave] = useState<LeaveRequest | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [leaveToEdit, setLeaveToEdit] = useState<LeaveRequest | null>(null);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [leaveToCancel, setLeaveToCancel] = useState<LeaveRequest | null>(null);
 
@@ -24,7 +26,8 @@ export function MyLeaveRequestsPage() {
   });
 
   const handleEditClick = (leave: LeaveRequest) => {
-    setSelectedLeave(leave);
+    setLeaveToEdit(leave);
+    setEditDialogOpen(true);
   };
 
   const handleCancelClick = (leave: LeaveRequest) => {
@@ -68,6 +71,12 @@ export function MyLeaveRequestsPage() {
           />
         </CardContent>
       </Card>
+
+      <EditLeaveDialog
+        leave={leaveToEdit}
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+      />
 
       <CancelLeaveDialog
         leave={leaveToCancel}
