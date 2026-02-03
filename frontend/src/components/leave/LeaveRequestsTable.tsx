@@ -154,7 +154,7 @@ export function LeaveRequestsTable({
 
   return (
     <div>
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
         <TableHeader>
           <TableRow>
@@ -190,12 +190,13 @@ export function LeaveRequestsTable({
                 </TableCell>
                 <TableCell className="w-[150px] text-right">
                   {isPending && (
-                    <div className="flex gap-2 justify-end">
+                    <div className="flex flex-col sm:flex-row gap-2 sm:justify-end">
                       {onEdit && (
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => onEdit(leave)}
+                          className="w-full sm:w-auto"
                         >
                           Edit
                         </Button>
@@ -205,6 +206,7 @@ export function LeaveRequestsTable({
                           variant="destructive"
                           size="sm"
                           onClick={() => onCancel(leave)}
+                          className="w-full sm:w-auto"
                         >
                           Cancel
                         </Button>

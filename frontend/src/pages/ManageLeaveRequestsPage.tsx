@@ -66,18 +66,18 @@ export function ManageLeaveRequestsPage() {
 
   return (
     <RoleGuard allowedRoles={['HR', 'ADMIN']}>
-      <div className="container mx-auto p-6">
+      <div className="container mx-auto p-4 sm:p-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-3xl font-bold">Manage Leave Requests</CardTitle>
-            <p className="text-muted-foreground">
+            <CardTitle className="text-2xl sm:text-3xl font-bold">Manage Leave Requests</CardTitle>
+            <p className="text-muted-foreground text-sm sm:text-base">
               Review and approve/reject employee leave requests
             </p>
           </CardHeader>
           <CardContent>
             {/* Filters */}
-            <div className="mb-6 flex gap-4 items-end">
-              <div className="w-48">
+            <div className="mb-6 flex flex-col sm:flex-row gap-4 sm:items-end">
+              <div className="w-full sm:w-48">
                 <Label htmlFor="status-filter">Filter by Status</Label>
                 <Select
                   value={statusFilter || 'all'}

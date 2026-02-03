@@ -220,18 +220,19 @@ export function LeaveRequestForm({
           )}
         />
 
-        <div className="flex gap-2 justify-end">
+        <div className="flex flex-col sm:flex-row gap-2 sm:justify-end">
           {onCancel && (
             <Button
               type="button"
               variant="outline"
               onClick={handleCancelClick}
               disabled={isLoading}
+              className="w-full sm:w-auto"
             >
               Cancel
             </Button>
           )}
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
             {isLoading
               ? 'Submitting...'
               : mode === 'create'

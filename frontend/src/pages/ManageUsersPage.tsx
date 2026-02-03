@@ -48,15 +48,15 @@ export function ManageUsersPage() {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-8">
-      <div className="flex justify-between items-start">
+    <div className="container mx-auto p-4 sm:p-6 space-y-6 sm:space-y-8">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Manage Users</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2">Manage Users</h1>
+          <p className="text-muted-foreground text-sm sm:text-base">
             Create and manage user accounts
           </p>
         </div>
-        <Button onClick={() => setCreateDialogOpen(true)}>
+        <Button onClick={() => setCreateDialogOpen(true)} className="w-full sm:w-auto">
           Create User
         </Button>
       </div>
@@ -115,7 +115,7 @@ export function ManageUsersPage() {
             </div>
 
             <div className="flex items-end">
-              <Button variant="outline" onClick={handleClearFilters}>
+              <Button variant="outline" onClick={handleClearFilters} className="w-full sm:w-auto">
                 Clear Filters
               </Button>
             </div>
@@ -135,8 +135,8 @@ export function ManageUsersPage() {
           />
 
           {data?.meta && data.meta.totalPages > 1 && (
-            <div className="flex justify-between items-center mt-4">
-              <div className="text-sm text-muted-foreground">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mt-4">
+              <div className="text-sm text-muted-foreground text-center sm:text-left">
                 Page {data.meta.page} of {data.meta.totalPages} ({data.meta.total} total users)
               </div>
               <div className="flex gap-2">
@@ -145,6 +145,7 @@ export function ManageUsersPage() {
                   size="sm"
                   onClick={() => setPage(page - 1)}
                   disabled={page === 1}
+                  className="flex-1 sm:flex-initial"
                 >
                   Previous
                 </Button>
@@ -153,6 +154,7 @@ export function ManageUsersPage() {
                   size="sm"
                   onClick={() => setPage(page + 1)}
                   disabled={page >= data.meta.totalPages}
+                  className="flex-1 sm:flex-initial"
                 >
                   Next
                 </Button>

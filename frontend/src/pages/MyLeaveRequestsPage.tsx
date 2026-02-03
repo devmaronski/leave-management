@@ -51,15 +51,15 @@ export function MyLeaveRequestsPage() {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-8">
-      <div className="flex justify-between items-center">
+    <div className="container mx-auto p-4 sm:p-6 space-y-6 sm:space-y-8">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold mb-2">My Leave Requests</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2">My Leave Requests</h1>
+          <p className="text-muted-foreground text-sm sm:text-base">
             Manage your leave requests and track their status
           </p>
         </div>
-        <Button onClick={() => setCreateDialogOpen(true)}>
+        <Button onClick={() => setCreateDialogOpen(true)} className="w-full sm:w-auto">
           <Plus className="mr-2 h-4 w-4" />
           Request New Leave
         </Button>

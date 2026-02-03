@@ -62,7 +62,7 @@ export function DecisionDialog({
 
         <div className="space-y-4 py-4">
           {/* Leave Details */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label className="text-muted-foreground">Employee</Label>
               <p className="font-medium">{userName}</p>
@@ -74,7 +74,7 @@ export function DecisionDialog({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label className="text-muted-foreground">Start Date</Label>
               <p className="font-medium">{formatDate(leave.startDate)}</p>
@@ -115,11 +115,12 @@ export function DecisionDialog({
           </div>
         </div>
 
-        <DialogFooter className="gap-2">
+        <DialogFooter className="flex-col sm:flex-row gap-2">
           <Button
             variant="outline"
             onClick={handleClose}
             disabled={isLoading}
+            className="w-full sm:w-auto"
           >
             Cancel
           </Button>
@@ -127,7 +128,7 @@ export function DecisionDialog({
             variant="destructive"
             onClick={() => handleSubmit('REJECTED')}
             disabled={isLoading}
-            className="gap-2"
+            className="gap-2 w-full sm:w-auto"
           >
             <XCircle className="h-4 w-4" />
             Reject
@@ -135,7 +136,7 @@ export function DecisionDialog({
           <Button
             onClick={() => handleSubmit('APPROVED')}
             disabled={isLoading}
-            className="gap-2"
+            className="gap-2 w-full sm:w-auto"
           >
             <CheckCircle2 className="h-4 w-4" />
             Approve
