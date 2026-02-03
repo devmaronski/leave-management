@@ -78,7 +78,7 @@ export function ManageLeaveRequestsPage() {
             {/* Filters */}
             <div className="mb-6 flex flex-col sm:flex-row gap-4 sm:items-end">
               <div className="w-full sm:w-48">
-                <Label htmlFor="status-filter">Filter by Status</Label>
+                <Label htmlFor="status-filter" className="block text-left">Filter by Status</Label>
                 <Select
                   value={statusFilter || 'all'}
                   onValueChange={handleStatusFilterChange}

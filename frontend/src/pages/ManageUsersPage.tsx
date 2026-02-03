@@ -68,7 +68,7 @@ export function ManageUsersPage() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label>Role</Label>
+              <Label className="block text-left">Role</Label>
               <Select
                 value={roleFilter || 'all'}
                 onValueChange={(value) =>
@@ -88,7 +88,7 @@ export function ManageUsersPage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Status</Label>
+              <Label className="block text-left">Status</Label>
               <Select
                 value={
                   isActiveFilter === undefined
