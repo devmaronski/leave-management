@@ -648,8 +648,19 @@ describe('LeaveRequestsService', () => {
         where: {
           userId,
           status: 'APPROVED',
-          startDate: { lte: new Date(dto.endDate) },
-          endDate: { gte: new Date(dto.startDate) },
+          OR: [
+            {
+              AND: [
+                { startDate: { lte: new Date(dto.endDate) } },
+                { endDate: { gte: new Date(dto.startDate) } },
+              ],
+            },
+          ],
+        },
+        select: {
+          id: true,
+          startDate: true,
+          endDate: true,
         },
       });
     });

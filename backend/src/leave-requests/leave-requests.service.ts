@@ -31,8 +31,19 @@ export class LeaveRequestsService {
       where: {
         userId,
         status: 'APPROVED',
-        startDate: { lte: end },
-        endDate: { gte: start },
+        OR: [
+          {
+            AND: [
+              { startDate: { lte: end } },
+              { endDate: { gte: start } },
+            ],
+          },
+        ],
+      },
+      select: {
+        id: true,
+        startDate: true,
+        endDate: true,
       },
     });
 
