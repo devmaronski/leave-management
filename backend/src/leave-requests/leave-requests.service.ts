@@ -3,6 +3,7 @@ import {
   BadRequestException,
   NotFoundException,
   ForbiddenException,
+  ConflictException,
 } from '@nestjs/common';
 import { PrismaService } from '../common/prisma/prisma.service';
 import { CreateLeaveDto } from './dto/create-leave.dto';
@@ -22,6 +23,22 @@ export class LeaveRequestsService {
     if (start > end) {
       throw new BadRequestException(
         'startDate must be before or equal to endDate',
+      );
+    }
+
+    // Check for overlaps with approved leaves
+    const overlapping = await this.prisma.leaveRequest.findFirst({
+      where: {
+        userId,
+        status: 'APPROVED',
+        startDate: { lte: end },
+        endDate: { gte: start },
+      },
+    });
+
+    if (overlapping) {
+      throw new ConflictException(
+        `Leave request overlaps with approved leave from ${overlapping.startDate.toISOString().split('T')[0]} to ${overlapping.endDate.toISOString().split('T')[0]}`,
       );
     }
 
