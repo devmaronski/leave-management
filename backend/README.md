@@ -13,6 +13,49 @@ NestJS REST API for the Leave Management System with PostgreSQL and Prisma.
 - **class-validator** - DTO validation
 - **bcrypt** - Password hashing
 
+## Features
+
+### Authentication & Authorization
+- User registration and login
+- JWT-based authentication
+- Role-based access control (EMPLOYEE, HR, ADMIN)
+- Password hashing with bcrypt
+- Rate limiting on login endpoint
+- Swagger API documentation
+
+### Leave Management
+- **Create leave request** (all authenticated users)
+- **Update/Cancel leave request** (owner only, PENDING only)
+- **Approve/Reject leave request** (HR/Admin only, PENDING only)
+- **View own leave requests** (with pagination & filters)
+- **View all leave requests** (HR/Admin only, with pagination & filters)
+- Date validation (startDate ≤ endDate)
+- Status workflow enforcement (PENDING → APPROVED/REJECTED/CANCELLED)
+- Comprehensive test coverage (19 service tests + 6 controller tests)
+
+### Infrastructure
+- NestJS project with TypeScript
+- PostgreSQL database with Prisma ORM
+- Database schema (User, LeaveRequest models)
+- Environment configuration
+- Testing infrastructure with Jest
+
+## API Endpoints
+
+### Authentication
+- `POST /auth/register` - Register new user
+- `POST /auth/login` - Login and get JWT token
+
+### Leave Requests
+- `POST /leave-requests` - Create leave request (EMPLOYEE, HR, ADMIN)
+- `PATCH /leave-requests/:id` - Update leave request (owner only, PENDING)
+- `POST /leave-requests/:id/cancel` - Cancel leave request (owner only, PENDING)
+- `POST /leave-requests/:id/decision` - Approve/reject leave (HR, ADMIN only)
+- `GET /leave-requests/mine` - Get own leave requests (with pagination)
+- `GET /leave-requests` - Get all leave requests (HR, ADMIN only)
+
+All endpoints except `/auth/*` require JWT authentication via `Authorization: Bearer <token>` header.
+
 ## Database Schema
 
 ### User Model
