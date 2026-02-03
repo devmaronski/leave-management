@@ -7,6 +7,7 @@ import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { MyLeaveRequestsPage } from './pages/MyLeaveRequestsPage';
 import { ManageLeaveRequestsPage } from './pages/ManageLeaveRequestsPage';
+import { ManageUsersPage } from './pages/ManageUsersPage';
 import './App.css';
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/leave-requests" element={<MyLeaveRequestsPage />} />
             <Route path="/manage/leave-requests" element={<ManageLeaveRequestsPage />} />
+            <Route path="/admin/users" element={<ManageUsersPage />} />
           </Route>
 
           {/* Default Redirect */}
