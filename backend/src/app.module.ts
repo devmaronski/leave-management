@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { PrismaModule } from './common/prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { LeaveRequestsModule } from './leave-requests/leave-requests.module';
+import { UsersModule } from './users/users.module';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 
 @Module({
@@ -23,6 +24,7 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
     PrismaModule,
     AuthModule,
     LeaveRequestsModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [
