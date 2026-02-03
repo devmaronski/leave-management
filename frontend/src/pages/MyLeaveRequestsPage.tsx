@@ -1,10 +1,70 @@
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { getMyLeaveRequests, type LeaveFilterDto } from '../api/leave.api';
+import type { LeaveRequest } from '../types/models';
+import { LeaveRequestForm } from '../components/leave/LeaveRequestForm';
+import { LeaveRequestsTable } from '../components/leave/LeaveRequestsTable';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+
 export function MyLeaveRequestsPage() {
+  const [page, setPage] = useState(1);
+  const [selectedLeave, setSelectedLeave] = useState<LeaveRequest | null>(null);
+
+  const filters: LeaveFilterDto = {
+    page,
+    limit: 10,
+  };
+
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ['leaveRequests', 'mine', filters],
+    queryFn: () => getMyLeaveRequests(filters),
+  });
+
+  const handleEditClick = (leave: LeaveRequest) => {
+    setSelectedLeave(leave);
+  };
+
+  const handleCancelClick = (leave: LeaveRequest) => {
+    // This will be implemented in the next commit
+    console.log('Cancel clicked for leave:', leave.id);
+  };
+
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-4">My Leave Requests</h1>
-      <p className="text-muted-foreground">
-        Employee leave management - to be implemented in Phase C
-      </p>
+    <div className="container mx-auto p-6 space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold mb-2">My Leave Requests</h1>
+        <p className="text-muted-foreground">
+          Manage your leave requests and track their status
+        </p>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Request New Leave</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <LeaveRequestForm
+            mode="create"
+            onSuccess={() => {
+              refetch();
+            }}
+          />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Your Leave History</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <LeaveRequestsTable
+            data={data?.data}
+            isLoading={isLoading}
+            onEdit={handleEditClick}
+            onCancel={handleCancelClick}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 }
