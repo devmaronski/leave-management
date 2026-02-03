@@ -150,6 +150,3 @@ For detailed backend documentation including database schema, development comman
 | admin@company.com | admin123 | ADMIN |
 | hr@company.com | hr123 | HR |
 | employee@company.com | employee123 | EMPLOYEE |
-| admin@company.com | admin123 | ADMIN |
-| hr@company.com | hr123 | HR |
-| employee@company.com | employee123 | EMPLOYEE |
