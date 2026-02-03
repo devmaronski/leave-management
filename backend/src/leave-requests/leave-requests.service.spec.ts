@@ -492,4 +492,123 @@ describe('LeaveRequestsService', () => {
       );
     });
   });
+
+  describe('date range filtering', () => {
+    it('should filter by fromDate only', async () => {
+      const userId = 'user123';
+      const filters: LeaveFilterDto = {
+        fromDate: '2026-03-01',
+        page: 1,
+        limit: 10,
+      };
+
+      const mockLeaves = [
+        {
+          id: 'leave1',
+          userId,
+          startDate: new Date('2026-03-05'),
+          endDate: new Date('2026-03-10'),
+        },
+        {
+          id: 'leave2',
+          userId,
+          startDate: new Date('2026-03-15'),
+          endDate: new Date('2026-03-20'),
+        },
+      ];
+
+      jest
+        .spyOn(prisma.leaveRequest, 'findMany')
+        .mockResolvedValue(mockLeaves as any);
+      jest.spyOn(prisma.leaveRequest, 'count').mockResolvedValue(2);
+
+      const result = await service.findMine(userId, filters);
+
+      expect(result.data).toEqual(mockLeaves);
+      expect(prisma.leaveRequest.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            userId,
+            startDate: { gte: new Date('2026-03-01') },
+          }),
+        }),
+      );
+    });
+
+    it('should filter by toDate only', async () => {
+      const userId = 'user123';
+      const filters: LeaveFilterDto = {
+        toDate: '2026-03-31',
+        page: 1,
+        limit: 10,
+      };
+
+      const mockLeaves = [
+        {
+          id: 'leave1',
+          userId,
+          startDate: new Date('2026-03-05'),
+          endDate: new Date('2026-03-10'),
+        },
+      ];
+
+      jest
+        .spyOn(prisma.leaveRequest, 'findMany')
+        .mockResolvedValue(mockLeaves as any);
+      jest.spyOn(prisma.leaveRequest, 'count').mockResolvedValue(1);
+
+      const result = await service.findMine(userId, filters);
+
+      expect(result.data).toEqual(mockLeaves);
+      expect(prisma.leaveRequest.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            userId,
+            endDate: { lte: new Date('2026-03-31') },
+          }),
+        }),
+      );
+    });
+
+    it('should filter by date range (both fromDate and toDate)', async () => {
+      const filters: LeaveFilterDto = {
+        fromDate: '2026-03-01',
+        toDate: '2026-03-31',
+        page: 1,
+        limit: 10,
+      };
+
+      const mockLeaves = [
+        {
+          id: 'leave1',
+          userId: 'user1',
+          startDate: new Date('2026-03-05'),
+          endDate: new Date('2026-03-10'),
+        },
+        {
+          id: 'leave2',
+          userId: 'user2',
+          startDate: new Date('2026-03-15'),
+          endDate: new Date('2026-03-20'),
+        },
+      ];
+
+      jest
+        .spyOn(prisma.leaveRequest, 'findMany')
+        .mockResolvedValue(mockLeaves as any);
+      jest.spyOn(prisma.leaveRequest, 'count').mockResolvedValue(2);
+
+      const result = await service.findAll(filters);
+
+      expect(result.data).toEqual(mockLeaves);
+      expect(prisma.leaveRequest.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            startDate: { gte: new Date('2026-03-01') },
+            endDate: { lte: new Date('2026-03-31') },
+          }),
+        }),
+      );
+    });
+  });
 });
