@@ -1,5 +1,9 @@
-import { format } from 'date-fns';
 import type { LeaveRequest } from '../../types/models';
+import {
+  LEAVE_TYPE_LABELS,
+  LEAVE_STATUS_VARIANTS,
+} from '@/constants/leave.constants';
+import { formatDate } from '@/utils/date.utils';
 import {
   Table,
   TableBody,
@@ -34,31 +38,6 @@ interface LeaveRequestsTableProps {
   onPageChange?: (page: number) => void;
   onEdit?: (leave: LeaveRequest) => void;
   onCancel?: (leave: LeaveRequest) => void;
-}
-
-const STATUS_VARIANTS: Record<
-  string,
-  'default' | 'secondary' | 'destructive' | 'outline'
-> = {
-  PENDING: 'default',
-  APPROVED: 'secondary',
-  REJECTED: 'destructive',
-  CANCELLED: 'outline',
-};
-
-const LEAVE_TYPE_LABELS: Record<string, string> = {
-  VL: 'Vacation Leave',
-  SL: 'Sick Leave',
-  EL: 'Emergency Leave',
-  UNPAID: 'Unpaid Leave',
-};
-
-function formatDate(dateString: string): string {
-  try {
-    return format(new Date(dateString), 'MMM dd, yyyy');
-  } catch {
-    return dateString;
-  }
 }
 
 function truncateText(text: string, maxLength: number = 60): string {
@@ -205,7 +184,7 @@ export function LeaveRequestsTable({
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={STATUS_VARIANTS[leave.status]}>
+                  <Badge variant={LEAVE_STATUS_VARIANTS[leave.status]}>
                     {leave.status}
                   </Badge>
                 </TableCell>

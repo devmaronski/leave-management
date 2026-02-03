@@ -13,6 +13,8 @@ import {
   type UpdateLeaveDto,
 } from '../../api/leave.api';
 import type { LeaveRequest } from '../../types/models';
+import { LEAVE_TYPE_LABELS } from '@/constants/leave.constants';
+import { toDateInputValue } from '@/utils/date.utils';
 import { Button } from '../ui/button';
 import {
   Form,
@@ -39,13 +41,6 @@ interface LeaveRequestFormProps {
   onCancel?: () => void;
 }
 
-const LEAVE_TYPE_LABELS: Record<string, string> = {
-  VL: 'Vacation Leave',
-  SL: 'Sick Leave',
-  EL: 'Emergency Leave',
-  UNPAID: 'Unpaid Leave',
-};
-
 export function LeaveRequestForm({
   mode,
   initialValues,
@@ -59,8 +54,8 @@ export function LeaveRequestForm({
     defaultValues: initialValues
       ? {
           type: initialValues.type,
-          startDate: initialValues.startDate.split('T')[0],
-          endDate: initialValues.endDate.split('T')[0],
+          startDate: toDateInputValue(initialValues.startDate),
+          endDate: toDateInputValue(initialValues.endDate),
           reason: initialValues.reason,
         }
       : {
@@ -79,9 +74,8 @@ export function LeaveRequestForm({
       form.reset();
       onSuccess?.();
     },
-    onError: (error: any) => {
-      const message =
-        error.response?.data?.message || 'Failed to submit leave request';
+    onError: (error: Error) => {
+      const message = error.message || 'Failed to submit leave request';
       toast.error(message);
     },
   });
@@ -94,9 +88,8 @@ export function LeaveRequestForm({
       toast.success('Leave request updated successfully');
       onSuccess?.();
     },
-    onError: (error: any) => {
-      const message =
-        error.response?.data?.message || 'Failed to update leave request';
+    onError: (error: Error) => {
+      const message = error.message || 'Failed to update leave request';
       toast.error(message);
     },
   });
