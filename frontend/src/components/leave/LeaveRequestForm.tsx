@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { useState } from 'react';
 import {
   leaveRequestSchema,
   type LeaveRequestFormData,
@@ -33,6 +34,16 @@ import {
 } from '../ui/select';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../ui/alert-dialog';
 
 interface LeaveRequestFormProps {
   mode: 'create' | 'edit';
@@ -48,6 +59,7 @@ export function LeaveRequestForm({
   onCancel,
 }: LeaveRequestFormProps) {
   const queryClient = useQueryClient();
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
 
   const form = useForm<LeaveRequestFormData>({
     resolver: zodResolver(leaveRequestSchema),
@@ -111,15 +123,36 @@ export function LeaveRequestForm({
 
   const isLoading = createMutation.isPending || updateMutation.isPending;
 
+  // Check if form has any values (is dirty)
+  const isFormDirty = () => {
+    const values = form.getValues();
+    return !!(values.type || values.startDate || values.endDate || values.reason);
+  };
+
+  const handleCancelClick = () => {
+    if (isFormDirty()) {
+      setShowCancelDialog(true);
+    } else {
+      onCancel?.();
+    }
+  };
+
+  const handleConfirmCancel = () => {
+    setShowCancelDialog(false);
+    form.reset();
+    onCancel?.();
+  };
+
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="type"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Leave Type</FormLabel>
+              <FormLabel className="block text-left w-full">Leave Type</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
@@ -145,7 +178,7 @@ export function LeaveRequestForm({
             name="startDate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Start Date</FormLabel>
+                <FormLabel className="block text-left w-full">Start Date</FormLabel>
                 <FormControl>
                   <Input type="date" {...field} />
                 </FormControl>
@@ -159,7 +192,7 @@ export function LeaveRequestForm({
             name="endDate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>End Date</FormLabel>
+                <FormLabel className="block text-left w-full">End Date</FormLabel>
                 <FormControl>
                   <Input type="date" {...field} />
                 </FormControl>
@@ -174,7 +207,7 @@ export function LeaveRequestForm({
           name="reason"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Reason</FormLabel>
+              <FormLabel className="block text-left w-full">Reason</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Please provide a reason for your leave request..."
@@ -192,7 +225,7 @@ export function LeaveRequestForm({
             <Button
               type="button"
               variant="outline"
-              onClick={onCancel}
+              onClick={handleCancelClick}
               disabled={isLoading}
             >
               Cancel
@@ -208,5 +241,23 @@ export function LeaveRequestForm({
         </div>
       </form>
     </Form>
+
+    <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Discard unsaved changes?</AlertDialogTitle>
+          <AlertDialogDescription>
+            You have unsaved changes in the form. Are you sure you want to cancel? All changes will be lost.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Continue Editing</AlertDialogCancel>
+          <AlertDialogAction onClick={handleConfirmCancel}>
+            Discard Changes
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 }

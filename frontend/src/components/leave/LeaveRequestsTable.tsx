@@ -158,11 +158,11 @@ export function LeaveRequestsTable({
         <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Leave Type</TableHead>
-            <TableHead>Dates</TableHead>
-            <TableHead>Reason</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead className="w-[140px] text-left">Leave Type</TableHead>
+            <TableHead className="w-[260px]">Dates</TableHead>
+            <TableHead className="text-left">Reason</TableHead>
+            <TableHead className="w-[120px]">Status</TableHead>
+            <TableHead className="w-[150px] text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -170,25 +170,25 @@ export function LeaveRequestsTable({
             const isPending = leave.status === 'PENDING';
             return (
               <TableRow key={leave.id}>
-                <TableCell className="font-medium">
+                <TableCell className="font-medium w-[140px] text-left">
                   {LEAVE_TYPE_LABELS[leave.type] || leave.type}
                 </TableCell>
-                <TableCell>
-                  <div className="text-sm">
+                <TableCell className="w-[260px]">
+                  <div className="text-sm whitespace-nowrap">
                     {formatDate(leave.startDate)} → {formatDate(leave.endDate)}
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell className="text-left">
                   <div className="max-w-xs">
                     {truncateText(leave.reason, 60)}
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell className="w-[120px]">
                   <Badge variant={LEAVE_STATUS_VARIANTS[leave.status]}>
                     {leave.status}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="w-[150px] text-right">
                   {isPending && (
                     <div className="flex gap-2 justify-end">
                       {onEdit && (

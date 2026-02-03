@@ -90,7 +90,7 @@ export function CreateUserDialog({
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="block text-left w-full">Email</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
@@ -109,7 +109,7 @@ export function CreateUserDialog({
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel className="block text-left w-full">Password</FormLabel>
                   <FormControl>
                     <Input
                       type="password"
@@ -129,7 +129,7 @@ export function CreateUserDialog({
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name</FormLabel>
+                    <FormLabel className="block text-left w-full">First Name</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="John"
@@ -147,7 +147,7 @@ export function CreateUserDialog({
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last Name</FormLabel>
+                    <FormLabel className="block text-left w-full">Last Name</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Doe"
@@ -166,7 +166,7 @@ export function CreateUserDialog({
               name="role"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Role</FormLabel>
+                  <FormLabel className="block text-left w-full">Role</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}

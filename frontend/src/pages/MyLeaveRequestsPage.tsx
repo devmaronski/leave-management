@@ -3,15 +3,17 @@ import { useQuery } from '@tanstack/react-query';
 import { getMyLeaveRequests, type LeaveFilterDto } from '../api/leave.api';
 import { DEFAULT_PAGE_SIZE } from '@/constants/leave.constants';
 import type { LeaveRequest } from '../types/models';
-import { LeaveRequestForm } from '../components/leave/LeaveRequestForm';
 import { LeaveRequestsTable } from '../components/leave/LeaveRequestsTable';
 import { CancelLeaveDialog } from '../components/leave/CancelLeaveDialog';
 import { EditLeaveDialog } from '../components/leave/EditLeaveDialog';
+import { CreateLeaveDialog } from '../components/leave/CreateLeaveDialog';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
+import { Plus } from 'lucide-react';
 
 export function MyLeaveRequestsPage() {
   const [page, setPage] = useState(1);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [leaveToEdit, setLeaveToEdit] = useState<LeaveRequest | null>(null);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
@@ -50,30 +52,22 @@ export function MyLeaveRequestsPage() {
 
   return (
     <div className="container mx-auto p-6 space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">My Leave Requests</h1>
-        <p className="text-muted-foreground">
-          Manage your leave requests and track their status
-        </p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">My Leave Requests</h1>
+          <p className="text-muted-foreground">
+            Manage your leave requests and track their status
+          </p>
+        </div>
+        <Button onClick={() => setCreateDialogOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" />
+          Request New Leave
+        </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Request New Leave</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <LeaveRequestForm
-            mode="create"
-            onSuccess={() => {
-              refetch();
-            }}
-          />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Your Leave History</CardTitle>
+          <CardTitle className="text-left">Your Leave History</CardTitle>
         </CardHeader>
         <CardContent>
           <LeaveRequestsTable
@@ -94,6 +88,11 @@ export function MyLeaveRequestsPage() {
           />
         </CardContent>
       </Card>
+
+      <CreateLeaveDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+      />
 
       <EditLeaveDialog
         leave={leaveToEdit}
