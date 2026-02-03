@@ -25,6 +25,7 @@ describe('LeaveRequestsService', () => {
             leaveRequest: {
               create: jest.fn(),
               findUnique: jest.fn(),
+              findFirst: jest.fn(),
               update: jest.fn(),
               findMany: jest.fn(),
               count: jest.fn(),
@@ -606,6 +607,244 @@ describe('LeaveRequestsService', () => {
           where: expect.objectContaining({
             startDate: { gte: new Date('2026-03-01') },
             endDate: { lte: new Date('2026-03-31') },
+          }),
+        }),
+      );
+    });
+  });
+
+  describe('overlap detection', () => {
+    it('should create leave with no overlaps', async () => {
+      const userId = 'user123';
+      const dto: CreateLeaveDto = {
+        type: 'VL',
+        startDate: '2026-03-15',
+        endDate: '2026-03-20',
+        reason: 'Spring vacation',
+      };
+
+      jest.spyOn(prisma.leaveRequest, 'findFirst').mockResolvedValue(null);
+
+      const mockLeaveRequest = {
+        id: 'leave123',
+        userId,
+        type: 'VL',
+        startDate: new Date('2026-03-15'),
+        endDate: new Date('2026-03-20'),
+        reason: 'Spring vacation',
+        status: 'PENDING',
+        decisionById: null,
+        decisionNote: null,
+        decidedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      jest
+        .spyOn(prisma.leaveRequest, 'create')
+        .mockResolvedValue(mockLeaveRequest as any);
+
+      const result = await service.create(userId, dto);
+
+      expect(result).toEqual(mockLeaveRequest);
+      expect(prisma.leaveRequest.findFirst).toHaveBeenCalledWith({
+        where: {
+          userId,
+          status: 'APPROVED',
+          startDate: { lte: new Date(dto.endDate) },
+          endDate: { gte: new Date(dto.startDate) },
+        },
+      });
+    });
+
+    it('should throw ConflictException when overlapping with APPROVED leave', async () => {
+      const userId = 'user123';
+      const dto: CreateLeaveDto = {
+        type: 'VL',
+        startDate: '2026-03-08',
+        endDate: '2026-03-12',
+        reason: 'Overlapping vacation',
+      };
+
+      const existingLeave = {
+        id: 'existing123',
+        userId,
+        status: 'APPROVED',
+        startDate: new Date('2026-03-05'),
+        endDate: new Date('2026-03-10'),
+      };
+
+      jest
+        .spyOn(prisma.leaveRequest, 'findFirst')
+        .mockResolvedValue(existingLeave as any);
+
+      await expect(service.create(userId, dto)).rejects.toThrow(
+        'Leave request overlaps with approved leave from',
+      );
+      expect(prisma.leaveRequest.create).not.toHaveBeenCalled();
+    });
+
+    it('should allow adjacent leaves (no overlap)', async () => {
+      const userId = 'user123';
+      const dto: CreateLeaveDto = {
+        type: 'VL',
+        startDate: '2026-03-11',
+        endDate: '2026-03-15',
+        reason: 'Adjacent vacation',
+      };
+
+      const existingLeave = {
+        id: 'existing123',
+        userId,
+        status: 'APPROVED',
+        startDate: new Date('2026-03-05'),
+        endDate: new Date('2026-03-10'),
+      };
+
+      // findFirst returns null because dates don't overlap
+      jest.spyOn(prisma.leaveRequest, 'findFirst').mockResolvedValue(null);
+
+      const mockLeaveRequest = {
+        id: 'leave123',
+        userId,
+        type: 'VL',
+        startDate: new Date('2026-03-11'),
+        endDate: new Date('2026-03-15'),
+        reason: 'Adjacent vacation',
+        status: 'PENDING',
+        decisionById: null,
+        decisionNote: null,
+        decidedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      jest
+        .spyOn(prisma.leaveRequest, 'create')
+        .mockResolvedValue(mockLeaveRequest as any);
+
+      const result = await service.create(userId, dto);
+
+      expect(result).toEqual(mockLeaveRequest);
+    });
+
+    it('should ignore PENDING leaves when checking overlaps', async () => {
+      const userId = 'user123';
+      const dto: CreateLeaveDto = {
+        type: 'VL',
+        startDate: '2026-03-08',
+        endDate: '2026-03-12',
+        reason: 'New vacation',
+      };
+
+      // findFirst only checks APPROVED status, so returns null for PENDING
+      jest.spyOn(prisma.leaveRequest, 'findFirst').mockResolvedValue(null);
+
+      const mockLeaveRequest = {
+        id: 'leave123',
+        userId,
+        type: 'VL',
+        startDate: new Date('2026-03-08'),
+        endDate: new Date('2026-03-12'),
+        reason: 'New vacation',
+        status: 'PENDING',
+        decisionById: null,
+        decisionNote: null,
+        decidedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      jest
+        .spyOn(prisma.leaveRequest, 'create')
+        .mockResolvedValue(mockLeaveRequest as any);
+
+      const result = await service.create(userId, dto);
+
+      expect(result).toEqual(mockLeaveRequest);
+      expect(prisma.leaveRequest.findFirst).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            status: 'APPROVED',
+          }),
+        }),
+      );
+    });
+
+    it('should ignore REJECTED leaves when checking overlaps', async () => {
+      const userId = 'user123';
+      const dto: CreateLeaveDto = {
+        type: 'VL',
+        startDate: '2026-03-08',
+        endDate: '2026-03-12',
+        reason: 'New vacation',
+      };
+
+      // findFirst only checks APPROVED status
+      jest.spyOn(prisma.leaveRequest, 'findFirst').mockResolvedValue(null);
+
+      const mockLeaveRequest = {
+        id: 'leave123',
+        userId,
+        type: 'VL',
+        startDate: new Date('2026-03-08'),
+        endDate: new Date('2026-03-12'),
+        reason: 'New vacation',
+        status: 'PENDING',
+        decisionById: null,
+        decisionNote: null,
+        decidedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      jest
+        .spyOn(prisma.leaveRequest, 'create')
+        .mockResolvedValue(mockLeaveRequest as any);
+
+      const result = await service.create(userId, dto);
+
+      expect(result).toEqual(mockLeaveRequest);
+    });
+
+    it('should only check overlaps for same user', async () => {
+      const userId = 'user123';
+      const dto: CreateLeaveDto = {
+        type: 'VL',
+        startDate: '2026-03-08',
+        endDate: '2026-03-12',
+        reason: 'My vacation',
+      };
+
+      // findFirst checks for userId in where clause
+      jest.spyOn(prisma.leaveRequest, 'findFirst').mockResolvedValue(null);
+
+      const mockLeaveRequest = {
+        id: 'leave123',
+        userId,
+        type: 'VL',
+        startDate: new Date('2026-03-08'),
+        endDate: new Date('2026-03-12'),
+        reason: 'My vacation',
+        status: 'PENDING',
+        decisionById: null,
+        decisionNote: null,
+        decidedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      jest
+        .spyOn(prisma.leaveRequest, 'create')
+        .mockResolvedValue(mockLeaveRequest as any);
+
+      const result = await service.create(userId, dto);
+
+      expect(result).toEqual(mockLeaveRequest);
+      expect(prisma.leaveRequest.findFirst).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            userId,
           }),
         }),
       );
