@@ -27,7 +27,7 @@ export class UsersService {
     }
 
     // Hash password
-    const passwordHash = await bcrypt.hash(createUserDto.password, 10);
+    const passwordHash = await bcrypt.hash(createUserDto.password, 12);
 
     // Create user with role defaulting to EMPLOYEE
     const user = await this.prisma.user.create({
