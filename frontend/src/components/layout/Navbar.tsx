@@ -25,7 +25,7 @@ export function Navbar() {
     
     // Admin only - user management
     if (user.role === 'ADMIN') {
-      links.push({ href: '/users', label: 'Users' });
+      links.push({ href: '/admin/users', label: 'Manage Users' });
     }
     
     return links;
