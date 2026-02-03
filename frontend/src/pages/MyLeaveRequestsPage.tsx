@@ -66,6 +66,16 @@ export function MyLeaveRequestsPage() {
           <LeaveRequestsTable
             data={data?.data}
             isLoading={isLoading}
+            pagination={
+              data?.meta
+                ? {
+                    currentPage: data.meta.page,
+                    totalPages: data.meta.totalPages,
+                    totalItems: data.meta.total,
+                  }
+                : undefined
+            }
+            onPageChange={setPage}
             onEdit={handleEditClick}
             onCancel={handleCancelClick}
           />

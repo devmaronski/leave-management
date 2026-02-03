@@ -10,11 +10,28 @@ import {
 } from '../ui/table';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '../ui/pagination';
 import { LoadingSpinner } from '../common/LoadingSpinner';
+
+interface PaginationMeta {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+}
 
 interface LeaveRequestsTableProps {
   data?: LeaveRequest[];
   isLoading?: boolean;
+  pagination?: PaginationMeta;
+  onPageChange?: (page: number) => void;
   onEdit?: (leave: LeaveRequest) => void;
   onCancel?: (leave: LeaveRequest) => void;
 }
@@ -52,6 +69,8 @@ function truncateText(text: string, maxLength: number = 60): string {
 export function LeaveRequestsTable({
   data,
   isLoading,
+  pagination,
+  onPageChange,
   onEdit,
   onCancel,
 }: LeaveRequestsTableProps) {
@@ -73,9 +92,91 @@ export function LeaveRequestsTable({
     );
   }
 
+  const renderPagination = () => {
+    if (!pagination || !onPageChange || pagination.totalPages <= 1) {
+      return null;
+    }
+
+    const { currentPage, totalPages } = pagination;
+    const pages: (number | 'ellipsis')[] = [];
+
+    // Always show first page
+    pages.push(1);
+
+    // Calculate range around current page
+    const start = Math.max(2, currentPage - 1);
+    const end = Math.min(totalPages - 1, currentPage + 1);
+
+    // Add ellipsis after first page if needed
+    if (start > 2) {
+      pages.push('ellipsis');
+    }
+
+    // Add pages around current page
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    // Add ellipsis before last page if needed
+    if (end < totalPages - 1) {
+      pages.push('ellipsis');
+    }
+
+    // Always show last page if there's more than one page
+    if (totalPages > 1) {
+      pages.push(totalPages);
+    }
+
+    return (
+      <div className="mt-4">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
+                className={
+                  currentPage === 1 ? 'pointer-events-none opacity-50' : ''
+                }
+              />
+            </PaginationItem>
+
+            {pages.map((page, index) => (
+              <PaginationItem key={`${page}-${index}`}>
+                {page === 'ellipsis' ? (
+                  <PaginationEllipsis />
+                ) : (
+                  <PaginationLink
+                    onClick={() => onPageChange(page)}
+                    isActive={currentPage === page}
+                  >
+                    {page}
+                  </PaginationLink>
+                )}
+              </PaginationItem>
+            ))}
+
+            <PaginationItem>
+              <PaginationNext
+                onClick={() =>
+                  currentPage < totalPages && onPageChange(currentPage + 1)
+                }
+                className={
+                  currentPage === totalPages
+                    ? 'pointer-events-none opacity-50'
+                    : ''
+                }
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </div>
+    );
+  };
+
   return (
-    <div className="rounded-md border">
-      <Table>
+    <div>
+      <div className="rounded-md border">
+        <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Leave Type</TableHead>
@@ -137,6 +238,8 @@ export function LeaveRequestsTable({
           })}
         </TableBody>
       </Table>
+      </div>
+      {renderPagination()}
     </div>
   );
 }
