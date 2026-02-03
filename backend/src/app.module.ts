@@ -9,11 +9,13 @@ import { AuthModule } from './auth/auth.module';
 import { LeaveRequestsModule } from './leave-requests/leave-requests.module';
 import { UsersModule } from './users/users.module';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { validateEnvironment } from './common/config/env.validation';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      validate: validateEnvironment,
     }),
     ThrottlerModule.forRoot([
       {
