@@ -28,6 +28,11 @@ export interface LeaveFilterDto {
   limit?: number;
 }
 
+export interface DecideLeaveDto {
+  decision: 'APPROVED' | 'REJECTED';
+  note?: string;
+}
+
 export const createLeaveRequest = async (
   dto: CreateLeaveDto
 ): Promise<LeaveRequest> => {
@@ -59,6 +64,27 @@ export const updateLeaveRequest = async (
 export const cancelLeaveRequest = async (id: string): Promise<LeaveRequest> => {
   const { data } = await apiClient.post<LeaveRequest>(
     `/leave-requests/${id}/cancel`
+  );
+  return data;
+};
+
+export const getAllLeaveRequests = async (
+  filters?: LeaveFilterDto
+): Promise<PaginatedResponse<LeaveRequest>> => {
+  const { data } = await apiClient.get<PaginatedResponse<LeaveRequest>>(
+    '/leave-requests',
+    { params: filters }
+  );
+  return data;
+};
+
+export const decideLeaveRequest = async (
+  id: string,
+  dto: DecideLeaveDto
+): Promise<LeaveRequest> => {
+  const { data } = await apiClient.post<LeaveRequest>(
+    `/leave-requests/${id}/decision`,
+    dto
   );
   return data;
 };

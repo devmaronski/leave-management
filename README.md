@@ -128,5 +128,5 @@ npm run dev
 | Email | Password | Role |
 |-------|----------|------|
 | admin@company.com | admin123 | ADMIN |
-| hr@company.com | hr123 | HR |
+| hr@company.com | hr123456 | HR |
 | employee@company.com | employee123 | EMPLOYEE |
