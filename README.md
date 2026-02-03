@@ -112,7 +112,9 @@ Test users created:
 
 ## Running Locally
 
-Start the development server:
+### Backend Server
+
+Start the backend development server:
 
 ```bash
 cd backend
@@ -121,16 +123,12 @@ npm run start:dev
 
 The server will start on `http://localhost:3000`
 
-### Access Swagger Documentation
-
-Open your browser:
+**Access Swagger Documentation:**
 ```
 http://localhost:3000/api-docs
 ```
 
-### Access Prisma Studio
-
-To view and manage database records:
+**Access Prisma Studio** (database management):
 
 ```bash
 cd backend
@@ -139,9 +137,41 @@ npx prisma studio
 
 Opens at `http://localhost:5555`
 
+### Frontend Application
+
+Navigate to frontend directory and install dependencies:
+
+```bash
+cd frontend
+npm install
+```
+
+Start the frontend development server:
+
+```bash
+npm run dev
+```
+
+The application will start on `http://localhost:5173`
+
+**Run Storybook** (component documentation):
+
+```bash
+npm run storybook
+```
+
+Storybook will open at `http://localhost:6006`
+
+**Run Tests:**
+
+```bash
+npm run test
+```
+
 ## Documentation
 
-For detailed backend documentation including database schema, development commands, and troubleshooting, see [Backend README](./backend/README.md).
+- **Backend**: See [Backend README](./backend/README.md) for API documentation, database schema, and development commands
+- **Frontend**: See [Frontend README](./frontend/README.md) for component documentation, authentication flow, and testing guidelines
 
 ## Test Users
 
