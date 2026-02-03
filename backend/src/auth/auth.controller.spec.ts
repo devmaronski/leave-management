@@ -43,9 +43,9 @@ describe('AuthController', () => {
       const loginDto = { email: 'test@example.com', password: 'password' };
       const loginResponse = {
         accessToken: 'jwt-token',
-        user: { 
-          id: 'user-1', 
-          email: 'test@example.com', 
+        user: {
+          id: 'user-1',
+          email: 'test@example.com',
           firstName: 'Test',
           lastName: 'User',
           role: Role.EMPLOYEE,
@@ -58,7 +58,10 @@ describe('AuthController', () => {
       const result = await controller.login(loginDto);
 
       expect(result).toEqual(loginResponse);
-      expect(authService.validateUser).toHaveBeenCalledWith('test@example.com', 'password');
+      expect(authService.validateUser).toHaveBeenCalledWith(
+        'test@example.com',
+        'password',
+      );
     });
 
     it('should throw UnauthorizedException on invalid credentials', async () => {
@@ -66,7 +69,9 @@ describe('AuthController', () => {
 
       jest.spyOn(authService, 'validateUser').mockResolvedValue(null);
 
-      await expect(controller.login(loginDto)).rejects.toThrow(UnauthorizedException);
+      await expect(controller.login(loginDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 

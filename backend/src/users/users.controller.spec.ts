@@ -64,6 +64,7 @@ describe('UsersController', () => {
       const result = await controller.create(createUserDto);
 
       expect(service.create).toHaveBeenCalledWith(createUserDto);
+      expect(service.create).toHaveBeenCalledTimes(1);
       expect(result).toEqual(expectedResult);
     });
   });
@@ -103,6 +104,7 @@ describe('UsersController', () => {
       const result = await controller.findAll(filters);
 
       expect(service.findAll).toHaveBeenCalledWith(filters);
+      expect(service.findAll).toHaveBeenCalledTimes(1);
       expect(result).toEqual(expectedResult);
     });
   });
@@ -135,6 +137,7 @@ describe('UsersController', () => {
         targetId,
         updateDto,
       );
+      expect(service.update).toHaveBeenCalledTimes(1);
       expect(result).toEqual(expectedResult);
     });
 
@@ -162,6 +165,7 @@ describe('UsersController', () => {
       const result = await controller.update(admin, targetId, updateDto);
 
       expect(service.update).toHaveBeenCalledWith(admin, targetId, updateDto);
+      expect(service.update).toHaveBeenCalledTimes(1);
       expect(result).toEqual(expectedResult);
     });
   });
@@ -187,6 +191,7 @@ describe('UsersController', () => {
       const result = await controller.deactivate(admin, userId);
 
       expect(service.deactivate).toHaveBeenCalledWith(admin.id, userId);
+      expect(service.deactivate).toHaveBeenCalledTimes(1);
       expect(result).toEqual(expectedResult);
       expect(result.isActive).toBe(false);
     });

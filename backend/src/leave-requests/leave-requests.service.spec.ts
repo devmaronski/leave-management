@@ -1,7 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LeaveRequestsService } from './leave-requests.service';
 import { PrismaService } from '../common/prisma/prisma.service';
-import { BadRequestException, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  BadRequestException,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { CreateLeaveDto } from './dto/create-leave.dto';
 import { UpdateLeaveDto } from './dto/update-leave.dto';
 import { DecideLeaveDto } from './dto/decide-leave.dto';
@@ -64,7 +68,9 @@ describe('LeaveRequestsService', () => {
         updatedAt: new Date(),
       };
 
-      jest.spyOn(prisma.leaveRequest, 'create').mockResolvedValue(mockLeaveRequest as any);
+      jest
+        .spyOn(prisma.leaveRequest, 'create')
+        .mockResolvedValue(mockLeaveRequest as any);
 
       // Act
       const result = await service.create(userId, dto);
@@ -92,7 +98,9 @@ describe('LeaveRequestsService', () => {
         reason: 'Invalid dates',
       };
 
-      await expect(service.create(userId, dto)).rejects.toThrow(BadRequestException);
+      await expect(service.create(userId, dto)).rejects.toThrow(
+        BadRequestException,
+      );
       await expect(service.create(userId, dto)).rejects.toThrow(
         'startDate must be before or equal to endDate',
       );
@@ -117,8 +125,12 @@ describe('LeaveRequestsService', () => {
 
       const updatedLeave = { ...existingLeave, reason: 'Updated reason' };
 
-      jest.spyOn(prisma.leaveRequest, 'findUnique').mockResolvedValue(existingLeave as any);
-      jest.spyOn(prisma.leaveRequest, 'update').mockResolvedValue(updatedLeave as any);
+      jest
+        .spyOn(prisma.leaveRequest, 'findUnique')
+        .mockResolvedValue(existingLeave as any);
+      jest
+        .spyOn(prisma.leaveRequest, 'update')
+        .mockResolvedValue(updatedLeave as any);
 
       const result = await service.update(userId, leaveId, dto);
 
@@ -136,9 +148,13 @@ describe('LeaveRequestsService', () => {
         status: 'PENDING',
       };
 
-      jest.spyOn(prisma.leaveRequest, 'findUnique').mockResolvedValue(existingLeave as any);
+      jest
+        .spyOn(prisma.leaveRequest, 'findUnique')
+        .mockResolvedValue(existingLeave as any);
 
-      await expect(service.update(userId, leaveId, dto)).rejects.toThrow(ForbiddenException);
+      await expect(service.update(userId, leaveId, dto)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('should throw BadRequestException if status is not PENDING', async () => {
@@ -152,9 +168,13 @@ describe('LeaveRequestsService', () => {
         status: 'APPROVED', // Cannot update after decision
       };
 
-      jest.spyOn(prisma.leaveRequest, 'findUnique').mockResolvedValue(existingLeave as any);
+      jest
+        .spyOn(prisma.leaveRequest, 'findUnique')
+        .mockResolvedValue(existingLeave as any);
 
-      await expect(service.update(userId, leaveId, dto)).rejects.toThrow(BadRequestException);
+      await expect(service.update(userId, leaveId, dto)).rejects.toThrow(
+        BadRequestException,
+      );
       await expect(service.update(userId, leaveId, dto)).rejects.toThrow(
         'Cannot update leave request that is not PENDING',
       );
@@ -167,7 +187,9 @@ describe('LeaveRequestsService', () => {
 
       jest.spyOn(prisma.leaveRequest, 'findUnique').mockResolvedValue(null);
 
-      await expect(service.update(userId, leaveId, dto)).rejects.toThrow(NotFoundException);
+      await expect(service.update(userId, leaveId, dto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should validate dates when both startDate and endDate are updated', async () => {
@@ -186,9 +208,13 @@ describe('LeaveRequestsService', () => {
         endDate: new Date('2026-03-03'),
       };
 
-      jest.spyOn(prisma.leaveRequest, 'findUnique').mockResolvedValue(existingLeave as any);
+      jest
+        .spyOn(prisma.leaveRequest, 'findUnique')
+        .mockResolvedValue(existingLeave as any);
 
-      await expect(service.update(userId, leaveId, dto)).rejects.toThrow(BadRequestException);
+      await expect(service.update(userId, leaveId, dto)).rejects.toThrow(
+        BadRequestException,
+      );
       await expect(service.update(userId, leaveId, dto)).rejects.toThrow(
         'startDate must be before or equal to endDate',
       );
@@ -208,8 +234,12 @@ describe('LeaveRequestsService', () => {
 
       const cancelledLeave = { ...existingLeave, status: 'CANCELLED' };
 
-      jest.spyOn(prisma.leaveRequest, 'findUnique').mockResolvedValue(existingLeave as any);
-      jest.spyOn(prisma.leaveRequest, 'update').mockResolvedValue(cancelledLeave as any);
+      jest
+        .spyOn(prisma.leaveRequest, 'findUnique')
+        .mockResolvedValue(existingLeave as any);
+      jest
+        .spyOn(prisma.leaveRequest, 'update')
+        .mockResolvedValue(cancelledLeave as any);
 
       const result = await service.cancel(userId, leaveId);
 
@@ -226,9 +256,13 @@ describe('LeaveRequestsService', () => {
         status: 'PENDING',
       };
 
-      jest.spyOn(prisma.leaveRequest, 'findUnique').mockResolvedValue(existingLeave as any);
+      jest
+        .spyOn(prisma.leaveRequest, 'findUnique')
+        .mockResolvedValue(existingLeave as any);
 
-      await expect(service.cancel(userId, leaveId)).rejects.toThrow(ForbiddenException);
+      await expect(service.cancel(userId, leaveId)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('should throw BadRequestException if status is not PENDING', async () => {
@@ -241,9 +275,13 @@ describe('LeaveRequestsService', () => {
         status: 'APPROVED',
       };
 
-      jest.spyOn(prisma.leaveRequest, 'findUnique').mockResolvedValue(existingLeave as any);
+      jest
+        .spyOn(prisma.leaveRequest, 'findUnique')
+        .mockResolvedValue(existingLeave as any);
 
-      await expect(service.cancel(userId, leaveId)).rejects.toThrow(BadRequestException);
+      await expect(service.cancel(userId, leaveId)).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should throw NotFoundException if leave does not exist', async () => {
@@ -252,7 +290,9 @@ describe('LeaveRequestsService', () => {
 
       jest.spyOn(prisma.leaveRequest, 'findUnique').mockResolvedValue(null);
 
-      await expect(service.cancel(userId, leaveId)).rejects.toThrow(NotFoundException);
+      await expect(service.cancel(userId, leaveId)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -281,8 +321,12 @@ describe('LeaveRequestsService', () => {
         decidedAt: new Date(),
       };
 
-      jest.spyOn(prisma.leaveRequest, 'findUnique').mockResolvedValue(existingLeave as any);
-      jest.spyOn(prisma.leaveRequest, 'update').mockResolvedValue(decidedLeave as any);
+      jest
+        .spyOn(prisma.leaveRequest, 'findUnique')
+        .mockResolvedValue(existingLeave as any);
+      jest
+        .spyOn(prisma.leaveRequest, 'update')
+        .mockResolvedValue(decidedLeave as any);
 
       const result = await service.decide(decisionById, leaveId, dto);
 
@@ -314,8 +358,12 @@ describe('LeaveRequestsService', () => {
         decidedAt: new Date(),
       };
 
-      jest.spyOn(prisma.leaveRequest, 'findUnique').mockResolvedValue(existingLeave as any);
-      jest.spyOn(prisma.leaveRequest, 'update').mockResolvedValue(decidedLeave as any);
+      jest
+        .spyOn(prisma.leaveRequest, 'findUnique')
+        .mockResolvedValue(existingLeave as any);
+      jest
+        .spyOn(prisma.leaveRequest, 'update')
+        .mockResolvedValue(decidedLeave as any);
 
       const result = await service.decide(decisionById, leaveId, dto);
 
@@ -332,9 +380,13 @@ describe('LeaveRequestsService', () => {
         status: 'APPROVED', // Already decided
       };
 
-      jest.spyOn(prisma.leaveRequest, 'findUnique').mockResolvedValue(existingLeave as any);
+      jest
+        .spyOn(prisma.leaveRequest, 'findUnique')
+        .mockResolvedValue(existingLeave as any);
 
-      await expect(service.decide(decisionById, leaveId, dto)).rejects.toThrow(BadRequestException);
+      await expect(service.decide(decisionById, leaveId, dto)).rejects.toThrow(
+        BadRequestException,
+      );
       await expect(service.decide(decisionById, leaveId, dto)).rejects.toThrow(
         'Can only decide on PENDING leave requests',
       );
@@ -347,7 +399,9 @@ describe('LeaveRequestsService', () => {
 
       jest.spyOn(prisma.leaveRequest, 'findUnique').mockResolvedValue(null);
 
-      await expect(service.decide(decisionById, leaveId, dto)).rejects.toThrow(NotFoundException);
+      await expect(service.decide(decisionById, leaveId, dto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -361,7 +415,9 @@ describe('LeaveRequestsService', () => {
         { id: 'leave2', userId, status: 'APPROVED' },
       ];
 
-      jest.spyOn(prisma.leaveRequest, 'findMany').mockResolvedValue(mockLeaves as any);
+      jest
+        .spyOn(prisma.leaveRequest, 'findMany')
+        .mockResolvedValue(mockLeaves as any);
       jest.spyOn(prisma.leaveRequest, 'count').mockResolvedValue(2);
 
       const result = await service.findMine(userId, filters);
@@ -381,7 +437,9 @@ describe('LeaveRequestsService', () => {
 
       const mockLeaves = [{ id: 'leave1', userId, status: 'PENDING' }];
 
-      jest.spyOn(prisma.leaveRequest, 'findMany').mockResolvedValue(mockLeaves as any);
+      jest
+        .spyOn(prisma.leaveRequest, 'findMany')
+        .mockResolvedValue(mockLeaves as any);
       jest.spyOn(prisma.leaveRequest, 'count').mockResolvedValue(1);
 
       const result = await service.findMine(userId, filters);
@@ -403,7 +461,9 @@ describe('LeaveRequestsService', () => {
         { id: 'leave2', userId: 'user2', status: 'APPROVED' },
       ];
 
-      jest.spyOn(prisma.leaveRequest, 'findMany').mockResolvedValue(mockLeaves as any);
+      jest
+        .spyOn(prisma.leaveRequest, 'findMany')
+        .mockResolvedValue(mockLeaves as any);
       jest.spyOn(prisma.leaveRequest, 'count').mockResolvedValue(2);
 
       const result = await service.findAll(filters);

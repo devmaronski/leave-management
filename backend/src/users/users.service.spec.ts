@@ -1,5 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  ConflictException,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { PrismaService } from '../common/prisma/prisma.service';
 import { Role } from '@prisma/client';
@@ -9,7 +13,6 @@ jest.mock('bcrypt');
 
 describe('UsersService', () => {
   let service: UsersService;
-  let prisma: PrismaService;
 
   const mockPrismaService = {
     user: {
@@ -33,7 +36,6 @@ describe('UsersService', () => {
     }).compile();
 
     service = module.get<UsersService>(UsersService);
-    prisma = module.get<PrismaService>(PrismaService);
 
     jest.clearAllMocks();
   });
@@ -311,7 +313,11 @@ describe('UsersService', () => {
       mockPrismaService.user.findUnique.mockResolvedValue(targetUser);
       mockPrismaService.user.update.mockResolvedValue(updatedUser);
 
-      const result = await service.update(currentUser, currentUser.id, updateDto);
+      const result = await service.update(
+        currentUser,
+        currentUser.id,
+        updateDto,
+      );
 
       expect(mockPrismaService.user.findUnique).toHaveBeenCalledWith({
         where: { id: currentUser.id },

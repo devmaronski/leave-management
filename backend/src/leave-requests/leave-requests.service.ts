@@ -1,4 +1,9 @@
-import { Injectable, BadRequestException, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../common/prisma/prisma.service';
 import { CreateLeaveDto } from './dto/create-leave.dto';
 import { UpdateLeaveDto } from './dto/update-leave.dto';
@@ -14,7 +19,9 @@ export class LeaveRequestsService {
     const end = new Date(dto.endDate);
 
     if (start > end) {
-      throw new BadRequestException('startDate must be before or equal to endDate');
+      throw new BadRequestException(
+        'startDate must be before or equal to endDate',
+      );
     }
 
     return this.prisma.leaveRequest.create({
@@ -39,11 +46,15 @@ export class LeaveRequestsService {
     }
 
     if (leave.userId !== userId) {
-      throw new ForbiddenException('You can only update your own leave requests');
+      throw new ForbiddenException(
+        'You can only update your own leave requests',
+      );
     }
 
     if (leave.status !== 'PENDING') {
-      throw new BadRequestException('Cannot update leave request that is not PENDING');
+      throw new BadRequestException(
+        'Cannot update leave request that is not PENDING',
+      );
     }
 
     // Validate dates if both are being updated
@@ -52,7 +63,9 @@ export class LeaveRequestsService {
       const end = dto.endDate ? new Date(dto.endDate) : leave.endDate;
 
       if (start > end) {
-        throw new BadRequestException('startDate must be before or equal to endDate');
+        throw new BadRequestException(
+          'startDate must be before or equal to endDate',
+        );
       }
     }
 
@@ -77,11 +90,15 @@ export class LeaveRequestsService {
     }
 
     if (leave.userId !== userId) {
-      throw new ForbiddenException('You can only cancel your own leave requests');
+      throw new ForbiddenException(
+        'You can only cancel your own leave requests',
+      );
     }
 
     if (leave.status !== 'PENDING') {
-      throw new BadRequestException('Cannot cancel leave request that is not PENDING');
+      throw new BadRequestException(
+        'Cannot cancel leave request that is not PENDING',
+      );
     }
 
     return this.prisma.leaveRequest.update({
@@ -100,7 +117,9 @@ export class LeaveRequestsService {
     }
 
     if (leave.status !== 'PENDING') {
-      throw new BadRequestException('Can only decide on PENDING leave requests');
+      throw new BadRequestException(
+        'Can only decide on PENDING leave requests',
+      );
     }
 
     return this.prisma.leaveRequest.update({

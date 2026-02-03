@@ -1,4 +1,11 @@
-import { IsOptional, IsEnum, IsBoolean, IsInt, Min, Max } from 'class-validator';
+import {
+  IsOptional,
+  IsEnum,
+  IsBoolean,
+  IsInt,
+  Min,
+  Max,
+} from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { Role } from '@prisma/client';
 import { ApiPropertyOptional } from '@nestjs/swagger';
@@ -14,7 +21,7 @@ export class UserFilterDto {
   @Transform(({ value }) => {
     if (value === 'true') return true;
     if (value === 'false') return false;
-    return value;
+    return value as boolean;
   })
   @IsBoolean()
   isActive?: boolean;

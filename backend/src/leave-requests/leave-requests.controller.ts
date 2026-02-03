@@ -1,5 +1,19 @@
-import { Controller, Post, Patch, Get, Body, Param, Query, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  Controller,
+  Post,
+  Patch,
+  Get,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { LeaveRequestsService } from './leave-requests.service';
 import { CreateLeaveDto } from './dto/create-leave.dto';
 import { UpdateLeaveDto } from './dto/update-leave.dto';
@@ -42,7 +56,10 @@ export class LeaveRequestsController {
     },
   })
   @ApiResponse({ status: 400, description: 'Invalid date range' })
-  create(@CurrentUser() user: { id: string; role: Role }, @Body() dto: CreateLeaveDto) {
+  create(
+    @CurrentUser() user: { id: string; role: Role },
+    @Body() dto: CreateLeaveDto,
+  ) {
     return this.service.create(user.id, dto);
   }
 
@@ -52,7 +69,11 @@ export class LeaveRequestsController {
   @ApiResponse({ status: 200, description: 'Leave request updated' })
   @ApiResponse({ status: 403, description: 'Not owner' })
   @ApiResponse({ status: 400, description: 'Cannot update non-PENDING leave' })
-  update(@CurrentUser() user: { id: string }, @Param('id') id: string, @Body() dto: UpdateLeaveDto) {
+  update(
+    @CurrentUser() user: { id: string },
+    @Param('id') id: string,
+    @Body() dto: UpdateLeaveDto,
+  ) {
     return this.service.update(user.id, id, dto);
   }
 
@@ -68,11 +89,17 @@ export class LeaveRequestsController {
 
   @Post(':id/decision')
   @Roles(Role.HR, Role.ADMIN)
-  @ApiOperation({ summary: 'Approve or reject a PENDING leave request (HR/Admin only)' })
+  @ApiOperation({
+    summary: 'Approve or reject a PENDING leave request (HR/Admin only)',
+  })
   @ApiResponse({ status: 200, description: 'Decision recorded' })
   @ApiResponse({ status: 400, description: 'Leave is not PENDING' })
   @ApiResponse({ status: 403, description: 'Insufficient permissions' })
-  decide(@CurrentUser() user: { id: string }, @Param('id') id: string, @Body() dto: DecideLeaveDto) {
+  decide(
+    @CurrentUser() user: { id: string },
+    @Param('id') id: string,
+    @Body() dto: DecideLeaveDto,
+  ) {
     return this.service.decide(user.id, id, dto);
   }
 
@@ -80,7 +107,10 @@ export class LeaveRequestsController {
   @Roles(Role.EMPLOYEE, Role.HR, Role.ADMIN)
   @ApiOperation({ summary: 'Get own leave requests with pagination' })
   @ApiResponse({ status: 200, description: 'Paginated leave requests' })
-  findMine(@CurrentUser() user: { id: string }, @Query() filters: LeaveFilterDto) {
+  findMine(
+    @CurrentUser() user: { id: string },
+    @Query() filters: LeaveFilterDto,
+  ) {
     return this.service.findMine(user.id, filters);
   }
 

@@ -8,7 +8,12 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -32,7 +37,10 @@ export class UsersController {
   @ApiOperation({ summary: 'Create a new user (Admin only)' })
   @ApiResponse({ status: 201, description: 'User created successfully' })
   @ApiResponse({ status: 400, description: 'Bad request - validation failed' })
-  @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - insufficient permissions',
+  })
   @ApiResponse({ status: 409, description: 'Conflict - email already exists' })
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
@@ -43,7 +51,10 @@ export class UsersController {
   @Roles(Role.ADMIN, Role.HR)
   @ApiOperation({ summary: 'List all users with filters (Admin/HR only)' })
   @ApiResponse({ status: 200, description: 'Users retrieved successfully' })
-  @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - insufficient permissions',
+  })
   findAll(@Query() filters: UserFilterDto) {
     return this.usersService.findAll(filters);
   }
@@ -52,7 +63,10 @@ export class UsersController {
   @ApiOperation({ summary: 'Update user (self or admin)' })
   @ApiResponse({ status: 200, description: 'User updated successfully' })
   @ApiResponse({ status: 400, description: 'Bad request - validation failed' })
-  @ApiResponse({ status: 403, description: 'Forbidden - cannot update other users' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - cannot update other users',
+  })
   @ApiResponse({ status: 404, description: 'User not found' })
   update(
     @CurrentUser() currentUser: { id: string; role: Role },
@@ -67,8 +81,14 @@ export class UsersController {
   @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Deactivate a user (Admin only)' })
   @ApiResponse({ status: 200, description: 'User deactivated successfully' })
-  @ApiResponse({ status: 400, description: 'Bad request - cannot deactivate self' })
-  @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request - cannot deactivate self',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - insufficient permissions',
+  })
   @ApiResponse({ status: 404, description: 'User not found' })
   deactivate(
     @CurrentUser() currentUser: { id: string; role: Role },

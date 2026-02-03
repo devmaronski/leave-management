@@ -26,7 +26,9 @@ describe('RolesGuard', () => {
   });
 
   it('should allow access when no roles are required', () => {
-    (reflector.getAllAndOverride as jest.Mock).mockImplementation(() => undefined);
+    (reflector.getAllAndOverride as jest.Mock).mockImplementation(
+      () => undefined,
+    );
 
     const context = {
       switchToHttp: () => ({
@@ -40,7 +42,9 @@ describe('RolesGuard', () => {
   });
 
   it('should allow access when user has required role', () => {
-    (reflector.getAllAndOverride as jest.Mock).mockImplementation(() => [Role.ADMIN]);
+    (reflector.getAllAndOverride as jest.Mock).mockImplementation(() => [
+      Role.ADMIN,
+    ]);
 
     const context = {
       switchToHttp: () => ({
@@ -54,7 +58,9 @@ describe('RolesGuard', () => {
   });
 
   it('should deny access when user lacks required role', () => {
-    (reflector.getAllAndOverride as jest.Mock).mockImplementation(() => [Role.ADMIN]);
+    (reflector.getAllAndOverride as jest.Mock).mockImplementation(() => [
+      Role.ADMIN,
+    ]);
 
     const context = {
       switchToHttp: () => ({
@@ -68,7 +74,10 @@ describe('RolesGuard', () => {
   });
 
   it('should allow access when user has one of multiple required roles', () => {
-    (reflector.getAllAndOverride as jest.Mock).mockImplementation(() => [Role.HR, Role.ADMIN]);
+    (reflector.getAllAndOverride as jest.Mock).mockImplementation(() => [
+      Role.HR,
+      Role.ADMIN,
+    ]);
 
     const context = {
       switchToHttp: () => ({

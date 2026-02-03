@@ -51,7 +51,9 @@ describe('AuthService', () => {
   describe('validateUser', () => {
     it('should return user when credentials are valid', async () => {
       jest.spyOn(prismaService.user, 'findUnique').mockResolvedValue(mockUser);
-      jest.spyOn(bcrypt, 'compare').mockImplementation(() => Promise.resolve(true));
+      jest
+        .spyOn(bcrypt, 'compare')
+        .mockImplementation(() => Promise.resolve(true));
 
       const result = await service.validateUser('test@example.com', 'password');
 
@@ -61,24 +63,36 @@ describe('AuthService', () => {
     it('should return null when user not found', async () => {
       jest.spyOn(prismaService.user, 'findUnique').mockResolvedValue(null);
 
-      const result = await service.validateUser('notfound@example.com', 'password');
+      const result = await service.validateUser(
+        'notfound@example.com',
+        'password',
+      );
 
       expect(result).toBeNull();
     });
 
     it('should return null when password is invalid', async () => {
       jest.spyOn(prismaService.user, 'findUnique').mockResolvedValue(mockUser);
-      jest.spyOn(bcrypt, 'compare').mockImplementation(() => Promise.resolve(false));
+      jest
+        .spyOn(bcrypt, 'compare')
+        .mockImplementation(() => Promise.resolve(false));
 
-      const result = await service.validateUser('test@example.com', 'wrongpassword');
+      const result = await service.validateUser(
+        'test@example.com',
+        'wrongpassword',
+      );
 
       expect(result).toBeNull();
     });
 
     it('should return null when user is inactive', async () => {
       const inactiveUser = { ...mockUser, isActive: false };
-      jest.spyOn(prismaService.user, 'findUnique').mockResolvedValue(inactiveUser);
-      jest.spyOn(bcrypt, 'compare').mockImplementation(() => Promise.resolve(true));
+      jest
+        .spyOn(prismaService.user, 'findUnique')
+        .mockResolvedValue(inactiveUser);
+      jest
+        .spyOn(bcrypt, 'compare')
+        .mockImplementation(() => Promise.resolve(true));
 
       const result = await service.validateUser('test@example.com', 'password');
 

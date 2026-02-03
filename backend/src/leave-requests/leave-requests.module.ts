@@ -6,6 +6,6 @@ import { PrismaModule } from '../common/prisma/prisma.module';
 @Module({
   imports: [PrismaModule],
   providers: [LeaveRequestsService],
-  controllers: [LeaveRequestsController]
+  controllers: [LeaveRequestsController],
 })
 export class LeaveRequestsModule {}

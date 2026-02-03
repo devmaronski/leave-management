@@ -1,4 +1,10 @@
-import { Injectable, ConflictException, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../common/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -85,7 +91,7 @@ export class UsersService {
     const { role, isActive, page = 1, limit = 10 } = filters;
 
     // Build where clause
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (role !== undefined) {
       where.role = role;
     }
@@ -151,7 +157,7 @@ export class UsersService {
     }
 
     // Filter allowed fields based on role
-    const allowedData: any = {};
+    const allowedData: Record<string, unknown> = {};
 
     if (updateDto.firstName !== undefined) {
       allowedData.firstName = updateDto.firstName;

@@ -4,7 +4,10 @@ import { Type } from 'class-transformer';
 import { LeaveStatus } from '@prisma/client';
 
 export class LeaveFilterDto {
-  @ApiPropertyOptional({ enum: LeaveStatus, description: 'Filter by leave status' })
+  @ApiPropertyOptional({
+    enum: LeaveStatus,
+    description: 'Filter by leave status',
+  })
   @IsOptional()
   @IsEnum(LeaveStatus)
   status?: LeaveStatus;
@@ -21,7 +24,12 @@ export class LeaveFilterDto {
   @Min(1)
   page?: number = 1;
 
-  @ApiPropertyOptional({ description: 'Items per page', minimum: 1, maximum: 100, default: 10 })
+  @ApiPropertyOptional({
+    description: 'Items per page',
+    minimum: 1,
+    maximum: 100,
+    default: 10,
+  })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
