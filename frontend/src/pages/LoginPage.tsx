@@ -25,10 +25,10 @@ export function LoginPage() {
     mutationFn: login,
     onSuccess: () => {
       toast.success('Login successful');
-      navigate('/dashboard');
+      navigate('/dashboard', { replace: true });
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || 'Login failed. Please try again.';
+    onError: (error: Error) => {
+      const message = error.message || 'Login failed. Please try again.';
       toast.error(message);
     },
   });

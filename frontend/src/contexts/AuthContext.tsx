@@ -44,12 +44,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [queryClient]);
 
   const login = async (credentials: LoginRequest): Promise<User> => {
-    const { accessToken } = await loginUser(credentials);
-    localStorage.setItem('access_token', accessToken);
-    const userData = await getCurrentUser();
-    setUser(userData);
-    queryClient.invalidateQueries({ queryKey: ['currentUser'] });
-    return userData;
+    try {
+      const { accessToken } = await loginUser(credentials);
+      localStorage.setItem('access_token', accessToken);
+      const userData = await getCurrentUser();
+      setUser(userData);
+      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+      return userData;
+    } catch (error) {
+      // Clean up on login failure
+      localStorage.removeItem('access_token');
+      throw error;
+    }
   };
 
   const logout = () => {
