@@ -159,9 +159,9 @@ export function LeaveRequestsTable({
         <TableHeader>
           <TableRow>
             <TableHead className="w-[140px] text-left">Leave Type</TableHead>
-            <TableHead className="w-[260px]">Dates</TableHead>
+            <TableHead className="w-[260px] text-left">Dates</TableHead>
             <TableHead className="text-left">Reason</TableHead>
-            <TableHead className="w-[120px]">Status</TableHead>
+            <TableHead className="w-[120px] text-left">Status</TableHead>
             <TableHead className="w-[150px] text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -173,7 +173,7 @@ export function LeaveRequestsTable({
                 <TableCell className="font-medium w-[140px] text-left">
                   {LEAVE_TYPE_LABELS[leave.type] || leave.type}
                 </TableCell>
-                <TableCell className="w-[260px]">
+                <TableCell className="w-[260px] text-left">
                   <div className="text-sm whitespace-nowrap">
                     {formatDate(leave.startDate)} → {formatDate(leave.endDate)}
                   </div>
@@ -183,7 +183,7 @@ export function LeaveRequestsTable({
                     {truncateText(leave.reason, 60)}
                   </div>
                 </TableCell>
-                <TableCell className="w-[120px]">
+                <TableCell className="w-[120px] text-left">
                   <Badge variant={LEAVE_STATUS_VARIANTS[leave.status]}>
                     {leave.status}
                   </Badge>

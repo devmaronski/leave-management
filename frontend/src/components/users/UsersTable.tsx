@@ -46,24 +46,24 @@ export function UsersTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Email</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead className="text-left">Email</TableHead>
+            <TableHead className="text-left">Name</TableHead>
+            <TableHead className="text-left">Role</TableHead>
+            <TableHead className="text-left">Status</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {users.map((user) => (
             <TableRow key={user.id}>
-              <TableCell className="font-medium">{user.email}</TableCell>
-              <TableCell>
+              <TableCell className="font-medium text-left">{user.email}</TableCell>
+              <TableCell className="text-left">
                 {user.firstName} {user.lastName}
               </TableCell>
-              <TableCell>
+              <TableCell className="text-left">
                 <RoleBadge role={user.role} />
               </TableCell>
-              <TableCell>
+              <TableCell className="text-left">
                 <ActiveBadge isActive={user.isActive} />
               </TableCell>
               <TableCell className="text-right">

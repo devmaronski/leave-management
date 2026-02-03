@@ -156,11 +156,11 @@ export function AdminLeaveRequestsTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Employee</TableHead>
-              <TableHead>Leave Type</TableHead>
-              <TableHead>Dates</TableHead>
-              <TableHead>Reason</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead className="text-left">Employee</TableHead>
+              <TableHead className="text-left">Leave Type</TableHead>
+              <TableHead className="text-left">Dates</TableHead>
+              <TableHead className="text-left">Reason</TableHead>
+              <TableHead className="text-left">Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -172,7 +172,7 @@ export function AdminLeaveRequestsTable({
               
               return (
                 <TableRow key={leave.id}>
-                  <TableCell>
+                  <TableCell className="text-left">
                     <div>
                       <div className="font-medium">{userName}</div>
                       {user && (
@@ -182,20 +182,20 @@ export function AdminLeaveRequestsTable({
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="font-medium">
+                  <TableCell className="font-medium text-left">
                     {LEAVE_TYPE_LABELS[leave.type] || leave.type}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-left">
                     <div className="text-sm">
                       {formatDate(leave.startDate)} → {formatDate(leave.endDate)}
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-left">
                     <div className="max-w-xs">
                       {truncateText(leave.reason, 40)}
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-left">
                     <Badge variant={LEAVE_STATUS_VARIANTS[leave.status]}>
                       {leave.status}
                     </Badge>

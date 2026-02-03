@@ -1,4 +1,5 @@
 import { useAuth } from '@/contexts/AuthContext';
+import { ActiveBadge } from '@/components/common/ActiveBadge';
 
 export function DashboardPage() {
   const { user } = useAuth();
@@ -66,8 +67,8 @@ export function DashboardPage() {
               <div className="ml-5 w-0 flex-1">
                 <dl>
                   <dt className="text-sm font-medium text-gray-500 truncate">Status</dt>
-                  <dd className="text-lg font-semibold text-gray-900">
-                    {user?.isActive ? 'Active' : 'Inactive'}
+                  <dd className="text-lg font-semibold">
+                    <ActiveBadge isActive={user?.isActive ?? false} />
                   </dd>
                 </dl>
               </div>
