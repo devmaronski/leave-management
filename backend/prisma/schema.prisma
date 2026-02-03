@@ -40,6 +40,8 @@ model User {
   leaveRequests     LeaveRequest[] @relation("UserLeaveRequests")
   decidedRequests   LeaveRequest[] @relation("DecisionMaker")
 
+  @@index([email])
+  @@index([role, isActive])
   @@map("users")
 }
 
@@ -60,5 +62,8 @@ model LeaveRequest {
   user         User   @relation("UserLeaveRequests", fields: [userId], references: [id])
   decisionBy   User?  @relation("DecisionMaker", fields: [decisionById], references: [id])
 
+  @@index([userId, status])
+  @@index([startDate, endDate])
+  @@index([status])
   @@map("leave_requests")
 }
