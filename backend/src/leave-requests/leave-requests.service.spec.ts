@@ -350,4 +350,86 @@ describe('LeaveRequestsService', () => {
       await expect(service.decide(decisionById, leaveId, dto)).rejects.toThrow(NotFoundException);
     });
   });
+
+  describe('findMine', () => {
+    it('should return paginated leave requests for the user', async () => {
+      const userId = 'user123';
+      const filters: LeaveFilterDto = { page: 1, limit: 10 };
+
+      const mockLeaves = [
+        { id: 'leave1', userId, status: 'PENDING' },
+        { id: 'leave2', userId, status: 'APPROVED' },
+      ];
+
+      jest.spyOn(prisma.leaveRequest, 'findMany').mockResolvedValue(mockLeaves as any);
+      jest.spyOn(prisma.leaveRequest, 'count').mockResolvedValue(2);
+
+      const result = await service.findMine(userId, filters);
+
+      expect(result.data).toEqual(mockLeaves);
+      expect(result.meta).toEqual({
+        page: 1,
+        limit: 10,
+        total: 2,
+        totalPages: 1,
+      });
+    });
+
+    it('should filter by status if provided', async () => {
+      const userId = 'user123';
+      const filters: LeaveFilterDto = { status: 'PENDING', page: 1, limit: 10 };
+
+      const mockLeaves = [{ id: 'leave1', userId, status: 'PENDING' }];
+
+      jest.spyOn(prisma.leaveRequest, 'findMany').mockResolvedValue(mockLeaves as any);
+      jest.spyOn(prisma.leaveRequest, 'count').mockResolvedValue(1);
+
+      const result = await service.findMine(userId, filters);
+
+      expect(prisma.leaveRequest.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { userId, status: 'PENDING' },
+        }),
+      );
+    });
+  });
+
+  describe('findAll', () => {
+    it('should return all leave requests with pagination', async () => {
+      const filters: LeaveFilterDto = { page: 1, limit: 10 };
+
+      const mockLeaves = [
+        { id: 'leave1', userId: 'user1', status: 'PENDING' },
+        { id: 'leave2', userId: 'user2', status: 'APPROVED' },
+      ];
+
+      jest.spyOn(prisma.leaveRequest, 'findMany').mockResolvedValue(mockLeaves as any);
+      jest.spyOn(prisma.leaveRequest, 'count').mockResolvedValue(2);
+
+      const result = await service.findAll(filters);
+
+      expect(result.data).toEqual(mockLeaves);
+      expect(result.meta.total).toBe(2);
+    });
+
+    it('should filter by userId and status', async () => {
+      const filters: LeaveFilterDto = {
+        userId: 'user123',
+        status: 'APPROVED',
+        page: 1,
+        limit: 10,
+      };
+
+      jest.spyOn(prisma.leaveRequest, 'findMany').mockResolvedValue([]);
+      jest.spyOn(prisma.leaveRequest, 'count').mockResolvedValue(0);
+
+      await service.findAll(filters);
+
+      expect(prisma.leaveRequest.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { userId: 'user123', status: 'APPROVED' },
+        }),
+      );
+    });
+  });
 });
