@@ -61,7 +61,7 @@ export const WithValidationErrors: Story = {
   args: {
     mode: 'create',
   },
-  play: async ({ canvasElement }) => {
+  play: async () => {
     // This story demonstrates what happens when user submits without filling required fields
     // In the actual UI, the validation errors will appear when user tries to submit
   },
