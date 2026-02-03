@@ -54,3 +54,24 @@ export interface LoginResponse {
 export interface AuthUser extends User {
   // Backend /me returns standard User fields
 }
+
+export interface CreateUserDto {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  role?: 'EMPLOYEE' | 'HR' | 'ADMIN';
+}
+
+export interface UpdateUserDto {
+  firstName?: string;
+  lastName?: string;
+  role?: 'EMPLOYEE' | 'HR' | 'ADMIN';
+}
+
+export interface UserFilterDto {
+  role?: 'EMPLOYEE' | 'HR' | 'ADMIN';
+  isActive?: boolean;
+  page?: number;
+  limit?: number;
+}
