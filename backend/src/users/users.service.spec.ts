@@ -383,7 +383,10 @@ describe('UsersService', () => {
 
     it('should throw ForbiddenException when non-admin tries to update other user', async () => {
       const otherUserId = 'other-user-id';
+      const otherUser = { ...targetUser, id: otherUserId };
       const updateDto = { firstName: 'Jane' };
+
+      mockPrismaService.user.findUnique.mockResolvedValue(otherUser);
 
       await expect(
         service.update(currentUser, otherUserId, updateDto),
