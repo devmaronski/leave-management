@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  EMPLOYEE
+  HR
+  ADMIN
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum LeaveType {
+  VL
+  SL
+  EL
+  UNPAID
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  role         Role      @default(EMPLOYEE)
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  leaveRequests     LeaveRequest[] @relation("UserLeaveRequests")
+  decidedRequests   LeaveRequest[] @relation("DecisionMaker")
+
+  @@map("users")
+}
+
+model LeaveRequest {
+  id            String      @id @default(cuid())
+  userId        String
+  type          LeaveType
+  startDate     DateTime
+  endDate       DateTime
+  reason        String
+  status        LeaveStatus @default(PENDING)
+  decisionById  String?
+  decisionNote  String?
+  decidedAt     DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  user         User   @relation("UserLeaveRequests", fields: [userId], references: [id])
+  decisionBy   User?  @relation("DecisionMaker", fields: [decisionById], references: [id])
+
+  @@map("leave_requests")
+}
