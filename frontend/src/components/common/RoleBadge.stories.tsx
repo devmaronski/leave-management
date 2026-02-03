@@ -32,6 +32,9 @@ export const Admin: Story = {
 };
 
 export const AllRoles: Story = {
+  args: {
+    role: 'EMPLOYEE',
+  },
   render: () => (
     <div className="flex gap-2">
       <RoleBadge role="EMPLOYEE" />

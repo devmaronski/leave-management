@@ -26,6 +26,9 @@ export const Inactive: Story = {
 };
 
 export const BothStates: Story = {
+  args: {
+    isActive: true,
+  },
   render: () => (
     <div className="flex gap-2">
       <ActiveBadge isActive={true} />
