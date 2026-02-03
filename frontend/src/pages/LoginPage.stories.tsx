@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
+import { AuthProvider } from '@/contexts/AuthContext';
 import { LoginPage } from './LoginPage';
 
 const queryClient = new QueryClient({
@@ -16,10 +17,12 @@ const meta = {
   decorators: [
     (Story) => (
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <Toaster position="top-right" richColors />
-          <Story />
-        </BrowserRouter>
+        <AuthProvider>
+          <BrowserRouter>
+            <Toaster position="top-right" richColors />
+            <Story />
+          </BrowserRouter>
+        </AuthProvider>
       </QueryClientProvider>
     ),
   ],
