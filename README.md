@@ -1,83 +1,98 @@
 # Employee Leave Management System
 
-A full-stack web application for managing employee leave requests, built to demonstrate best practices in architecture, security, testing, and Git workflow.
-
----
+A full-stack web application for managing employee leave requests with secure authentication, role-based access control, and comprehensive testing.
 
 ## Project Overview
 
-The **Employee Leave Management System** allows employees to file leave requests and enables HR/Admin users to review, approve, or reject them.
+Employees can file leave requests while HR/Admin users review, approve, or reject them. The system demonstrates best practices in architecture, security, testing, and Git workflow.
 
-The system demonstrates:
-- Secure authentication and role-based access control (RBAC)
-- Clean CRUD APIs with business rules
-- Proper validation, error handling, and logging
-- A clear Git workflow with meaningful commits
-- Practical frontend-backend integration
-
----
-
-## Architecture
-
-This repository uses a **simple monorepo structure** with separate frontend and backend applications to keep concerns isolated and setup straightforward.
-
-
-```
-leave-management/
-├── backend/          # NestJS REST API
-├── frontend/         # React (Vite) client
-└── README.md
-```
-
-Each application has its own:
-- `package.json`
-- `.gitignore`
-- environment configuration
-
-
-## Features
-
-- Role-based access control (Employee, HR, Admin)
-- Database: PostgreSQL with Prisma ORM
-- API Documentation with Swagger
-- JWT authentication setup
+**Key Features:**
+- Role-based access control (EMPLOYEE, HR, ADMIN)
+- JWT authentication with secure password hashing
+- RESTful API with Swagger documentation
+- Responsive React UI with form validation
+- PostgreSQL database with Prisma ORM
 - Full TypeScript implementation
+
+## Tech Stack
+
+**Backend:** NestJS, PostgreSQL, Prisma ORM, JWT/Passport.js, class-validator, Swagger, Jest  
+**Frontend:** React 18, TypeScript, Vite, shadcn/ui, Tailwind CSS, React Hook Form, Zod, Axios, TanStack Query, Vitest, Storybook  
+**Tools:** Git, npm, ESLint, Prettier
+
+## Security Approach
+
+**Authentication & Authorization:**
+- JWT-based authentication with bcrypt password hashing
+- Role-based access control (RBAC) with three distinct roles
+- Protected routes on both frontend and backend
+- Secure token management and automatic cleanup on 401 errors
+
+**API & Data Security:**
+- CORS configuration with restricted origins
+- Input validation using DTOs and class-validator
+- Prisma ORM with prepared statements (SQL injection prevention)
+- Environment variables for sensitive credentials
+- Custom guards for route-level authorization
+
+**Application Security:**
+- TypeScript for type safety throughout
+- Resource ownership validation (users can only access their own data)
+- State machine logic for leave request status transitions
+- Error handling without exposing sensitive information
+- Request timeout and error boundaries for resilience
+
+## Testing Strategy
+
+**Backend (Jest):**
+- Unit tests for services (auth, leave requests, users)
+- Integration tests for controllers and API contracts
+- E2E tests for complete user flows
+- Commands: `npm run test`, `npm run test:cov`, `npm run test:e2e`
+
+**Frontend (Vitest + React Testing Library):**
+- Component tests with user interaction validation
+- Integration tests for contexts and protected routes
+- Storybook for visual testing and component documentation
+- Commands: `npm run test`, `npm run test:ui`, `npm run coverage`
+
+**Best Practices:** AAA pattern, proper mocking, dedicated seed data, CI-ready tests
 
 ## Prerequisites
 
-Before you begin, ensure you have the following installed:
+- Node.js v18+
+- npm v9+
+- PostgreSQL v14+
 
-- Node.js (v18 or higher)
-- npm (v9 or higher)
-- PostgreSQL (v14 or higher)
+## Quick Start
 
-## Local Setup
-
-### 1. Clone the Repository
+### 1. Clone & Install
 
 ```bash
 git clone <repository-url>
 cd leave-management
-```
 
-### 2. Backend Setup
-
-Navigate to backend directory and install dependencies:
-
-```bash
+# Backend
 cd backend
+npm install
+
+# Frontend
+cd ../frontend
 npm install
 ```
 
-### 3. Configure Environment
-
-Create `.env` file in the backend directory:
+### 2. Database Setup
 
 ```bash
-cp .env.example .env
+createdb leave_management
+cd backend
+npx prisma migrate dev
+npx prisma db seed
 ```
 
-Update the `.env` file with your PostgreSQL credentials:
+### 3. Environment Configuration
+
+Create `backend/.env`:
 
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/leave_management?schema=public"
@@ -88,90 +103,25 @@ PORT=3000
 NODE_ENV="development"
 ```
 
-### 4. Database Setup
+### 4. Run Applications
 
-Create the database:
-```bash
-createdb leave_management
-```
-
-Run migrations:
-```bash
-npx prisma migrate dev
-```
-
-Seed test data:
-```bash
-npx prisma db seed
-```
-
-Test users created:
-- Admin: `admin@company.com` / `admin123`
-- HR: `hr@company.com` / `hr123`
-- Employee: `employee@company.com` / `employee123`
-
-## Running Locally
-
-### Backend Server
-
-Start the backend development server:
-
+**Backend** (http://localhost:3000):
 ```bash
 cd backend
 npm run start:dev
 ```
 
-The server will start on `http://localhost:3000`
-
-**Access Swagger Documentation:**
-```
-http://localhost:3000/api-docs
-```
-
-**Access Prisma Studio** (database management):
-
-```bash
-cd backend
-npx prisma studio
-```
-
-Opens at `http://localhost:5555`
-
-### Frontend Application
-
-Navigate to frontend directory and install dependencies:
-
+**Frontend** (http://localhost:5173):
 ```bash
 cd frontend
-npm install
-```
-
-Start the frontend development server:
-
-```bash
 npm run dev
 ```
 
-The application will start on `http://localhost:5173`
+## Additional Resources
 
-**Run Storybook** (component documentation):
-
-```bash
-npm run storybook
-```
-
-Storybook will open at `http://localhost:6006`
-
-**Run Tests:**
-
-```bash
-npm run test
-```
-
-## Documentation
-
-- **Backend**: See [Backend README](./backend/README.md) for API documentation, database schema, and development commands
-- **Frontend**: See [Frontend README](./frontend/README.md) for component documentation, authentication flow, and testing guidelines
+- **API Docs:** http://localhost:3000/api-docs (Swagger)
+- **Database UI:** `npx prisma studio` → http://localhost:5555
+- **Storybook:** `cd frontend && npm run storybook` → http://localhost:6006
 
 ## Test Users
 
