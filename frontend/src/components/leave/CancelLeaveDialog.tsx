@@ -33,9 +33,8 @@ export function CancelLeaveDialog({
       toast.success('Leave request cancelled successfully');
       onOpenChange(false);
     },
-    onError: (error: any) => {
-      const message =
-        error.response?.data?.message || 'Failed to cancel leave request';
+    onError: (error: Error) => {
+      const message = error.message || 'Failed to cancel leave request';
       toast.error(message);
     },
   });
