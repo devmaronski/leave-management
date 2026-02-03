@@ -90,6 +90,8 @@ npx prisma migrate dev
 npx prisma db seed
 ```
 
+> **Note:** The `createdb` command creates a new PostgreSQL database. Ensure PostgreSQL is running before executing (`pg_isready` to verify). If you encounter permission issues, you may need to specify a user: `createdb -U postgres leave_management`
+
 ### 3. Environment Configuration
 
 Create `backend/.env`:
