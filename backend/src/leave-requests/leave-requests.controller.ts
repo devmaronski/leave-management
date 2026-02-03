@@ -1,7 +1,8 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Patch, Body, Param, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { LeaveRequestsService } from './leave-requests.service';
 import { CreateLeaveDto } from './dto/create-leave.dto';
+import { UpdateLeaveDto } from './dto/update-leave.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -41,5 +42,25 @@ export class LeaveRequestsController {
   @ApiResponse({ status: 400, description: 'Invalid date range' })
   create(@CurrentUser() user: { id: string; role: Role }, @Body() dto: CreateLeaveDto) {
     return this.service.create(user.id, dto);
+  }
+
+  @Patch(':id')
+  @Roles(Role.EMPLOYEE, Role.HR, Role.ADMIN)
+  @ApiOperation({ summary: 'Update own PENDING leave request' })
+  @ApiResponse({ status: 200, description: 'Leave request updated' })
+  @ApiResponse({ status: 403, description: 'Not owner' })
+  @ApiResponse({ status: 400, description: 'Cannot update non-PENDING leave' })
+  update(@CurrentUser() user: { id: string }, @Param('id') id: string, @Body() dto: UpdateLeaveDto) {
+    return this.service.update(user.id, id, dto);
+  }
+
+  @Post(':id/cancel')
+  @Roles(Role.EMPLOYEE, Role.HR, Role.ADMIN)
+  @ApiOperation({ summary: 'Cancel own PENDING leave request' })
+  @ApiResponse({ status: 200, description: 'Leave request cancelled' })
+  @ApiResponse({ status: 403, description: 'Not owner' })
+  @ApiResponse({ status: 400, description: 'Cannot cancel non-PENDING leave' })
+  cancel(@CurrentUser() user: { id: string }, @Param('id') id: string) {
+    return this.service.cancel(user.id, id);
   }
 }
