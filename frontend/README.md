@@ -6,7 +6,7 @@ React + TypeScript frontend for the Employee Leave Management System.
 
 - **Framework**: React 18 + TypeScript
 - **Build Tool**: Vite 6
-- **Styling**: Tailwind CSS 4
+- **Styling**: Tailwind CSS 3
 - **UI Components**: shadcn/ui (Radix + Tailwind)
 - **Routing**: React Router 7
 - **State Management**: React Query (server state) + Context API (auth state)
