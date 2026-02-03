@@ -4,11 +4,14 @@ import { getMyLeaveRequests, type LeaveFilterDto } from '../api/leave.api';
 import type { LeaveRequest } from '../types/models';
 import { LeaveRequestForm } from '../components/leave/LeaveRequestForm';
 import { LeaveRequestsTable } from '../components/leave/LeaveRequestsTable';
+import { CancelLeaveDialog } from '../components/leave/CancelLeaveDialog';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 
 export function MyLeaveRequestsPage() {
   const [page, setPage] = useState(1);
   const [selectedLeave, setSelectedLeave] = useState<LeaveRequest | null>(null);
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [leaveToCancel, setLeaveToCancel] = useState<LeaveRequest | null>(null);
 
   const filters: LeaveFilterDto = {
     page,
@@ -25,8 +28,8 @@ export function MyLeaveRequestsPage() {
   };
 
   const handleCancelClick = (leave: LeaveRequest) => {
-    // This will be implemented in the next commit
-    console.log('Cancel clicked for leave:', leave.id);
+    setLeaveToCancel(leave);
+    setCancelDialogOpen(true);
   };
 
   return (
@@ -65,6 +68,12 @@ export function MyLeaveRequestsPage() {
           />
         </CardContent>
       </Card>
+
+      <CancelLeaveDialog
+        leave={leaveToCancel}
+        open={cancelDialogOpen}
+        onOpenChange={setCancelDialogOpen}
+      />
     </div>
   );
 }
