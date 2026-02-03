@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsEnum, IsString, IsInt, Min, Max } from 'class-validator';
+import { IsOptional, IsEnum, IsString, IsInt, Min, Max, IsDateString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { LeaveStatus } from '@prisma/client';
 
@@ -16,6 +16,22 @@ export class LeaveFilterDto {
   @IsOptional()
   @IsString()
   userId?: string;
+
+  @ApiPropertyOptional({
+    description: 'Filter leaves starting from this date (inclusive)',
+    example: '2026-03-01',
+  })
+  @IsOptional()
+  @IsDateString()
+  fromDate?: string;
+
+  @ApiPropertyOptional({
+    description: 'Filter leaves ending before this date (inclusive)',
+    example: '2026-03-31',
+  })
+  @IsOptional()
+  @IsDateString()
+  toDate?: string;
 
   @ApiPropertyOptional({ description: 'Page number', minimum: 1, default: 1 })
   @IsOptional()

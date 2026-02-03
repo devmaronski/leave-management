@@ -135,11 +135,13 @@ export class LeaveRequestsService {
   }
 
   async findMine(userId: string, filters: LeaveFilterDto) {
-    const { status, page = 1, limit = 10 } = filters;
+    const { status, fromDate, toDate, page = 1, limit = 10 } = filters;
 
     const where = {
       userId,
       ...(status && { status }),
+      ...(fromDate && { startDate: { gte: new Date(fromDate) } }),
+      ...(toDate && { endDate: { lte: new Date(toDate) } }),
     };
 
     return paginate(
@@ -153,11 +155,13 @@ export class LeaveRequestsService {
   }
 
   async findAll(filters: LeaveFilterDto) {
-    const { status, userId, page = 1, limit = 10 } = filters;
+    const { status, userId, fromDate, toDate, page = 1, limit = 10 } = filters;
 
     const where = {
       ...(userId && { userId }),
       ...(status && { status }),
+      ...(fromDate && { startDate: { gte: new Date(fromDate) } }),
+      ...(toDate && { endDate: { lte: new Date(toDate) } }),
     };
 
     return paginate(
